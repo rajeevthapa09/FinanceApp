@@ -14,3 +14,8 @@
 * Yesterday: I worked on drawing the application on a piece of paper
 * Today: I will start on the backend.
 * Block: Lack of focus, motivation and distraction
+
+## 11/30/2023
+* Yesterday: I worked on backend, setting/configuring the (backend and frontend) environment. 
+* Today: I will work on sign up and login functionality for backend and frontend.
+* Block: I have forgotten a lot of React and Backend development. I am having to revise previous course which is taking time.
