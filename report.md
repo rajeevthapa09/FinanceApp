@@ -19,3 +19,8 @@
 * Yesterday: I worked on backend, setting/configuring the (backend and frontend) environment. 
 * Today: I will work on sign up and login functionality for backend and frontend.
 * Block: I have forgotten a lot of React and Backend development. I am having to revise previous course which is taking time.
+
+## 12/01/2023
+* Yesterday: I worked on signup and login functionality for the backend and builing the frontend side of it.  
+* Today: I will work on completting the sign up and login functionality for backend and frontend.
+* Block: Due to health issue, I have not been making good progress.
