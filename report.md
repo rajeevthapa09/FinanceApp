@@ -24,3 +24,9 @@
 * Yesterday: I worked on signup and login functionality for the backend and builing the frontend side of it.  
 * Today: I will work on completting the sign up and login functionality for backend and frontend.
 * Block: Due to health issue, I have not been making good progress.
+
+## 12/02/2023
+* Yesterday: I completed signup and login functionality for the backend and builing the frontend side of it, including the token. I also
+            created a frontend form for budget 
+* Today: I will work on building the building the budget form, including the frontend and backend. Also I will work on the stock features(frontend and backend)
+* Block: n/a
