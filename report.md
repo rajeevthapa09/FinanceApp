@@ -30,3 +30,8 @@
             created a frontend form for budget 
 * Today: I will work on building the building the budget form, including the frontend and backend. Also I will work on the stock features(frontend and backend)
 * Block: n/a
+
+## 12/03/2023
+* Yesterday: I worked on budget page and finance page. I did some research on how to use Finance API to extract stock information
+* Today: I will work on implmenting Finance API and Budget page.
+* Block: Low Energy/Overthinking/Health. I am worried I am not fast enough with the project and I am behind.

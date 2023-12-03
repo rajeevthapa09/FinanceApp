@@ -1,5 +1,5 @@
 
-export function Budget(){
+export default function Budget(){
 
     return(
         <div>
