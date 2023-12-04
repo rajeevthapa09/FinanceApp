@@ -35,3 +35,8 @@
 * Yesterday: I worked on budget page and finance page. I did some research on how to use Finance API to extract stock information
 * Today: I will work on implmenting Finance API and Budget page.
 * Block: Low Energy/Overthinking/Health. I am worried I am not fast enough with the project and I am behind.
+
+## 12/04/2023
+* Yesterday: I worked on trying to use Square api to work for the payment transaction
+* Today: I will work on implmenting Payment code, Finance API and Budget page.
+* Block: Figuring out how to use Square sandbox is taking time. 
