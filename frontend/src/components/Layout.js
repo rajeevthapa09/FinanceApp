@@ -6,10 +6,11 @@ import BookAdvisor from "./BookAdvisors"
 import ViewMsg from "./ViewMsg"
 import Stocks from "./Stocks"
 import Savings from "./Savings"
+import BuySellStocks from "./BuySellStocks";
 
 const myrouter = createBrowserRouter([
     {
-        path: "/home",
+        path: "/",
         element: <Home />
     },
     {
@@ -27,6 +28,10 @@ const myrouter = createBrowserRouter([
     {
         path: "/stocks",
         element: <Stocks />
+    },
+    {
+        path: "/buysellstocks",
+        element: <BuySellStocks />
     },
     {
         path: "/viewSavings",

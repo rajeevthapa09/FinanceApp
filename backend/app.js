@@ -45,11 +45,33 @@ app.post('/signup', async(req, res) => {
     const encrypted = await bcrypt.hash(body.password, 10);
     console.log("adf", {...body, password: encrypted})
 
-    const result = await db.collection(COLLECTION_NAME).insertOne({...body, password: encrypted});
+    const result = await db.collection(COLLECTION_NAME).insertOne({...body, password: encrypted, stocks:[]});
 
     res.status(200).send({success: true, data: result});
   }catch(error){
     res.status(500).send({success: false, err: "DB error"})
+  }
+})
+
+app.post("/addStocks", async (req, res) => {
+  try{
+    console.log("date" , new Date());
+    const body = req.body;
+    console.log("body", body)
+    const addStocks = await db.collection("stocks").insertOne({...body, date: new Date()});
+    res.status(200).send({success:true, data: addStocks});
+  }catch(error){
+    console.log(error);
+  }
+})
+
+app.post("/addTransaction", async(req, res) => {
+  try{
+    const body = req.body;
+    const addTransaction = await db.collection(COLLECTION_NAME).insertOne({"email": "test@test.edu"},{$push: {stocks: {...body, date: new Date()}}})
+    res.status(200).send({success: true, data:addTransaction});
+  }catch(error){
+    console.log(error);
   }
 })
 
@@ -82,23 +104,23 @@ app.post("/signin", async (req, res) => {
   }
 })
 
-function auth(req, res, next) {
-  const token = req.headers["authorization"]?.splic (" ")[1];
-  const key = PRIVATE_KEY;
+// function auth(req, res, next) {
+//   const token = req.headers["authorization"]?.splic (" ")[1];
+//   const key = PRIVATE_KEY;
 
-  if(!token){
-    return res.status(401).send({success: false, error: "Please provide token"});
-  }
+//   if(!token){
+//     return res.status(401).send({success: false, error: "Please provide token"});
+//   }
 
-  jwt.verify(token, key, (err, decoded) => {
-    if(err) {
-      return res.status(401).send({success: false, error: err.message});
-    }
-    req.currentUser = decoded;
-    next();
-  })
-}
-app.use(auth);
+//   jwt.verify(token, key, (err, decoded) => {
+//     if(err) {
+//       return res.status(401).send({success: false, error: err.message});
+//     }
+//     req.currentUser = decoded;
+//     next();
+//   })
+// }
+// app.use(auth);
 
 app.use((err, req, res, next) => {
   console.log(err.message);

@@ -1,13 +1,13 @@
 import logo from './logo.svg';
 import './App.css';
 import { RouterProvider } from 'react-router-dom';
-import loginRouter from './components/SigninLayout';
+import myrouter from './components/Layout';
 
 
 function App() {
   return (
     <div>
-      <RouterProvider router={loginRouter}/>
+      <RouterProvider router={myrouter}/>
     </div>
   );
 }
