@@ -1,6 +1,14 @@
+import { useNavigate } from "react-router-dom"
 
 
 export default function Signup(){
+    let navigate = useNavigate();
+
+    const loginHandle = (e) => {
+        if(e.target.value === "login"){
+            navigate("/")
+        }
+    }
 
     return(
         <div>
@@ -11,7 +19,7 @@ export default function Signup(){
             <label>Role : </label><input type="text" value="" />
             <label>Email : </label><input type="text" value="" />
             <label>Password : </label><input type="text" value="" />
-            <button>Back to Login</button><button>Signup</button>
+            <button onClick={loginHandle} value="login">Back to Login</button><button onClick={loginHandle} value="signup">Signup</button>
         </div>
     )
 }

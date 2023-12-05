@@ -40,3 +40,8 @@
 * Yesterday: I worked on trying to use Square api to work for the payment transaction
 * Today: I will work on implmenting Payment code, Finance API and Budget page.
 * Block: Figuring out how to use Square sandbox is taking time. 
+
+## 12/05/2023
+* Yesterday: I felt sick, I could not do much coding.
+* Today: I will work on completing implmenting Payment code, Finance API and Budget page.
+* Block: Health

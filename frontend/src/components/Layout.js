@@ -9,7 +9,7 @@ import Savings from "./Savings"
 
 const myrouter = createBrowserRouter([
     {
-        path: "/",
+        path: "/home",
         element: <Home />
     },
     {
