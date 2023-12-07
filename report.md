@@ -45,3 +45,13 @@
 * Yesterday: I felt sick, I could not do much coding.
 * Today: I will work on completing implmenting Payment code, Finance API and Budget page.
 * Block: Health
+
+## 12/06/2023
+* Yesterday: 
+* Today: 
+* Block: 
+
+## 12/07/2023
+* Yesterday: Felt sick all day. Worked on Advisor page a bit. Worked on budget page. 
+* Today: Try to get everything I can do to complete the project
+* Block: Medicine side effects

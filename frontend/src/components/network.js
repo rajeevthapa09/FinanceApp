@@ -13,10 +13,10 @@ export async function signup(user){
     }
 }
 
-export async function login(user){
-    const url = "/login";
+export async function login(email, password){
+    const url = "/signin";
     try{
-        const res = await axios.post(url, user);
+        const res = await axios.post(url, {email, password});
         return res.data;
     }catch (error){
         return null;

@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom"
 import { useState } from "react";
-
+import { signup } from "./network";
 
 //Enum for user roles
 const UserRole = {
@@ -10,7 +10,7 @@ const UserRole = {
 
 export default function Signup(){
     let navigate = useNavigate();
-    const [user, setUser] = useState({name: "", address: "", occupation: "", role: "", email: "", password:""});
+    const [user, setUser] = useState({fname: "", address: "", occupation: "", role: "", email: "", password:""});
     const change = (e) => {
         setUser({...user, [e.target.name]: e.target.value});
     }
@@ -20,7 +20,7 @@ export default function Signup(){
             navigate("/")
         }
         try{
-            const res = await Signup({"name": user.name, "address": user.address, "occupation": user.occupation, "role": user.role, "email": user.email, "password": user.password});
+            const res = await signup({"name": user.fname, "address": user.address, "occupation": user.occupation, "role": user.role, "email": user.email, "password": user.password});
             if(res){
                 if(res.success) {
                     navigate("/")
@@ -29,13 +29,13 @@ export default function Signup(){
                 }
             }
         } catch (error) {
-            error.message();
+            console.log(error)
         }
     }
 
     return(
         <div>
-            <label>Name : </label><input type="text" value={user.name} onChange={change} name="fname" />
+            <label>Name : </label><input type="text" value={user.fname} onChange={change} name="fname" />
             <label>Address : </label><input type="text" value={user.address} onChange={change} name="address" />
             <label>Occupation : </label><input type="text" value={user.occupation} onChange={change} name="occupation" />
             <label>Role : </label>
@@ -46,7 +46,7 @@ export default function Signup(){
             
             <input type="text" value={user.role} onChange={change} name="role" />
             <label>Email : </label><input type="text" value={user.email} onChange={change} name="email" />
-            <label>Password : </label><input type="text" value={user.password} onChange={change} name="password" />
+            <label>Password : </label><input type="password" value={user.password} onChange={change} name="password" />
             <button onClick={loginHandle} value="login">Back to Login</button><button onClick={loginHandle} value="signup">Signup</button>
         </div>
     )
