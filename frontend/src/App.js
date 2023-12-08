@@ -13,23 +13,22 @@ import { useEffect } from 'react';
 function App() {
   const [state, setState] = useState({ token: null, user: "", role: true });
 
-  useEffect(() => {
-    const getToken = () => {
-      try {
-        const token = localStorage.getToken("token");
-        if(token){
-          const usr = localStorage.getToken("userEmail");
-        }
-        try {
-         
-      } catch (error) {
-        
+  const getToken = () => {
+    try {
+      const token = localStorage.getItem("token");
+      if(token){
+        const user = localStorage.getItem("userEmail");
+        console.log("user", user, "token", token);
+        setState({...state, token, user})
       }
-    };
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
-    getToken();
-  }, []);
-}
+  useEffect(() => 
+    getToken()
+  , []);
 
   return (
     <div>

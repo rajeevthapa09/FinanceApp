@@ -10,7 +10,7 @@ const UserRole = {
 
 export default function Signup(){
     let navigate = useNavigate();
-    const [user, setUser] = useState({fname: "", address: "", occupation: "", role: "", email: "", password:""});
+    const [user, setUser] = useState({fname: "", address: "", occupation: "", role: "", email: "", password:"", profileImg:""});
     const change = (e) => {
         setUser({...user, [e.target.name]: e.target.value});
     }
@@ -20,7 +20,7 @@ export default function Signup(){
             navigate("/")
         }
         try{
-            const res = await signup({"name": user.fname, "address": user.address, "occupation": user.occupation, "role": user.role, "email": user.email, "password": user.password});
+            const res = await signup({"name": user.fname, "address": user.address, "occupation": user.occupation, "role": user.role, "email": user.email, "password": user.password, "profileImg":user.profileImg});
             if(res){
                 if(res.success) {
                     navigate("/")
@@ -47,6 +47,7 @@ export default function Signup(){
             <input type="text" value={user.role} onChange={change} name="role" />
             <label>Email : </label><input type="text" value={user.email} onChange={change} name="email" />
             <label>Password : </label><input type="password" value={user.password} onChange={change} name="password" />
+            <label>Profile Pic : </label><input type="text" value={user.profileImg} onChange={change} name="profileImg" />
             <button onClick={loginHandle} value="login">Back to Login</button><button onClick={loginHandle} value="signup">Signup</button>
         </div>
     )

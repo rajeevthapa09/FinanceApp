@@ -1,67 +1,100 @@
 
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { addBudget, getBudget } from "./network";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
 
-    const [budgetData, setBudgetData] = useState({
-        wages: { expected: '', actual: '', difference: '', notes: '' },
-        otherIncome: { expected: '', actual: '', difference: '', notes: '' },
-        rentMortgage: { expected: '', actual: '', difference: '', notes: '' },
-        groceries: { expected: '', actual: '', difference: '', notes: '' },
-        restaurants: { expected: '', actual: '', difference: '', notes: '' },
-        insurance: { expected: '', actual: '', difference: '', notes: '' },
-        utilities: { expected: '', actual: '', difference: '', notes: '' },
-        gas: { expected: '', actual: '', difference: '', notes: '' },
-        entertainment: { expected: '', actual: '', difference: '', notes: '' },
-        loans: { expected: '', actual: '', difference: '', notes: '' },
-    });
+
+    const yearRef = useRef();
+    const monthRef = useRef();
+
+    const [budget, setBudget] = useState({
+        wages: { expected: "", actual: "", notes: "" },
+        otherIncome: { expected: "", actual: "", notes: "" },
+        rent: { expected: "", actual: "", notes: "" },
+        groceries: { expected: "", actual: "", notes: "" }
+    })
+
 
     const updateBudgetData = (category, field, value) => {
-        setBudgetData((prevData) => ({
-            ...prevData,
-            [category]: { ...prevData[category], [field]: value },
-        }));
-    };
+        setBudget((prev) => ({
+            ...prev, [category]: { ...prev[category], [field]: value }
+        }))
+    }
 
-    const calculateTotals = () => {
-        const incomeCategories = ['wages', 'otherIncome'];
-        const expenseCategories = [
-            'rentMortgage',
-            'groceries',
-            'restaurants',
-            'insurance',
-            'utilities',
-            'gas',
-            'entertainment',
-            'loans',
-        ];
+    const totalIncome = parseInt(budget.wages.actual || 0) + parseInt(budget.otherIncome.actual || 0);
+    const totalExpense = parseInt(budget.rent.actual || 0) + parseInt(budget.groceries.actual || 0);
 
-        const totalIncome = incomeCategories.reduce(
-            (sum, category) => sum + parseFloat(budgetData[category].actual || 0),
-            0
-        );
+    const submitBudget = async () => {
+        console.log(yearRef.current.value, "year", monthRef.current.value, "month");
+        try {
+            const ret = await addBudget({ date: `${yearRef.current.value}-${monthRef.current.value}`, budget });
+            console.log(ret);
 
-        const totalExpense = expenseCategories.reduce(
-            (sum, category) => sum + parseFloat(budgetData[category].actual || 0),
-            0
-        );
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
-        const savings = totalIncome - totalExpense;
+    const viewBudget = async() => {
+        try{
+            console.log("date", `${yearRef.current.value}-${monthRef.current.value}`)
+            const ret = await getBudget(`${yearRef.current.value}-${monthRef.current.value}`);
+            console.log(ret.data);
+            // setBudget({...budget, wages: ret.wages, otherIncome: ret.otherIncome, rent: ret.rent, groceries: ret.groceries});
+            if(ret.data){
+                setBudget({...ret.data.budget})
+            }else{
+                setBudget({
+                    wages: { expected: "", actual: "", notes: "" },
+                    otherIncome: { expected: "", actual: "", notes: "" },
+                    rent: { expected: "", actual: "", notes: "" },
+                    groceries: { expected: "", actual: "", notes: "" }
+                });
+            }
+            
+        }catch(error){
+            console.log(error);
+        }
+    }
+    // let navigate = useNavigate();
+    // const viewProfile = () => {
+    //     navigate("/viewProfile")
+    // }
 
-        return { totalIncome, totalExpense, savings };
-    };
-
-    // Get calculated totals
-    const { totalIncome, totalExpense, savings } = calculateTotals();
 
     return (
         <div>
+            {/* <button onClick={viewProfile}>View Profile</button> */}
+            <label>Select Date:</label>
+            <select defaultValue={new Date().getFullYear()} ref={yearRef} >
+                <option value="2023">2023</option>
+                <option value="2022">2022</option>
+                <option value="2021">2021</option>
+                <option value="2020">2020</option>
+            </select>
+            <select defaultValue={new Date().getMonth()} ref={monthRef}>
+                <option value="1">Jan</option>
+                <option value="2">Feb</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">Aug</option>
+                <option value="9">Sep</option>
+                <option value="10">Oct</option>
+                <option value="11">Nov</option>
+                <option value="12">Dec</option>
+            </select>
+            <button onClick={viewBudget}>View Budget</button>
+
             <table>
                 <tr>
                     <th>Income/Expense</th>
                     <th>Expected</th>
                     <th>Actual</th>
-                    <th>Difference</th>
                     <th>Notes</th>
                 </tr>
                 <tr>
@@ -69,29 +102,22 @@ export default function Home() {
                     <td>
                         <input
                             type="text"
-                            value={budgetData.wages.expected}
-                            onChange={(e) => updateBudgetData('wages', 'expected', e.target.value)}
+                            value={budget.wages.expected}
+                            onChange={e => updateBudgetData('wages', 'expected', e.target.value)}
                         />
                     </td>
                     <td>
                         <input
                             type="text"
-                            value={budgetData.wages.actual}
-                            onChange={(e) => updateBudgetData('wages', 'actual', e.target.value)}
+                            value={budget.wages.actual}
+                            onChange={e => updateBudgetData('wages', 'actual', e.target.value)}
                         />
                     </td>
                     <td>
                         <input
                             type="text"
-                            value={budgetData.wages.difference}
-                            readOnly
-                        />
-                    </td>
-                    <td>
-                        <input
-                            type="text"
-                            value={budgetData.wages.notes}
-                            onChange={(e) => updateBudgetData('wages', 'notes', e.target.value)}
+                            value={budget.wages.notes}
+                            onChange={e => updateBudgetData('wages', 'notes', e.target.value)}
                         />
                     </td>
                 </tr>
@@ -100,28 +126,21 @@ export default function Home() {
                     <td>
                         <input
                             type="text"
-                            value={budgetData.otherIncome.expected}
+                            value={budget.otherIncome.expected}
                             onChange={(e) => updateBudgetData('otherIncome', 'expected', e.target.value)}
                         />
                     </td>
                     <td>
                         <input
                             type="text"
-                            value={budgetData.otherIncome.actual}
+                            value={budget.otherIncome.actual}
                             onChange={(e) => updateBudgetData('otherIncome', 'actual', e.target.value)}
                         />
                     </td>
                     <td>
                         <input
                             type="text"
-                            value={budgetData.otherIncome.difference}
-                            readOnly
-                        />
-                    </td>
-                    <td>
-                        <input
-                            type="text"
-                            value={budgetData.otherIncome.notes}
+                            value={budget.otherIncome.notes}
                             onChange={(e) => updateBudgetData('otherIncome', 'notes', e.target.value)}
                         />
                     </td>
@@ -131,29 +150,22 @@ export default function Home() {
                     <td>
                         <input
                             type="text"
-                            value={budgetData.rentMortgage.expected}
-                            onChange={(e) => updateBudgetData('rentMortgage', 'expected', e.target.value)}
+                            value={budget.rent.expected}
+                            onChange={(e) => updateBudgetData('rent', 'expected', e.target.value)}
                         />
                     </td>
                     <td>
                         <input
                             type="text"
-                            value={budgetData.rentMortgage.actual}
-                            onChange={(e) => updateBudgetData('rentMortgage', 'actual', e.target.value)}
+                            value={budget.rent.actual}
+                            onChange={(e) => updateBudgetData('rent', 'actual', e.target.value)}
                         />
                     </td>
                     <td>
                         <input
                             type="text"
-                            value={budgetData.rentMortgage.difference}
-                            readOnly
-                        />
-                    </td>
-                    <td>
-                        <input
-                            type="text"
-                            value={budgetData.rentMortgage.notes}
-                            onChange={(e) => updateBudgetData('rentMortgage', 'notes', e.target.value)}
+                            value={budget.rent.notes}
+                            onChange={(e) => updateBudgetData('rent', 'notes', e.target.value)}
                         />
                     </td>
                 </tr>
@@ -162,33 +174,26 @@ export default function Home() {
                     <td>
                         <input
                             type="text"
-                            value={budgetData.groceries.expected}
+                            value={budget.groceries.expected}
                             onChange={(e) => updateBudgetData('groceries', 'expected', e.target.value)}
                         />
                     </td>
                     <td>
                         <input
                             type="text"
-                            value={budgetData.groceries.actual}
+                            value={budget.groceries.actual}
                             onChange={(e) => updateBudgetData('groceries', 'actual', e.target.value)}
                         />
                     </td>
                     <td>
                         <input
                             type="text"
-                            value={budgetData.groceries.difference}
-                            readOnly
-                        />
-                    </td>
-                    <td>
-                        <input
-                            type="text"
-                            value={budgetData.groceries.notes}
+                            value={budget.groceries.notes}
                             onChange={(e) => updateBudgetData('groceries', 'notes', e.target.value)}
                         />
                     </td>
                 </tr>
-                <tr>
+                {/*  <tr>
                     <td>Restaurants</td>
                     <td>
                         <input
@@ -373,29 +378,30 @@ export default function Home() {
                             onChange={(e) => updateBudgetData('loans', 'notes', e.target.value)}
                         />
                     </td>
-                </tr>
+                </tr> */}
 
             </table>
             <table>
                 <tr>
                     <td>Total Income:</td>
                     <td>
-                        <input type="text" value={totalIncome} readOnly />
+                        <input type="text" value={totalIncome} />
                     </td>
                 </tr>
                 <tr>
                     <td>Total Expense:</td>
                     <td>
-                        <input type="text" value={totalExpense} readOnly />
+                        <input type="text" value={totalExpense} />
                     </td>
                 </tr>
                 <tr>
                     <td>Savings:</td>
                     <td>
-                        <input type="text" value={savings} readOnly />
+                        <input type="text" value={totalIncome - totalExpense} />
                     </td>
                 </tr>
             </table>
+            <button onClick={submitBudget}>Submit</button>
         </div>
     )
 }

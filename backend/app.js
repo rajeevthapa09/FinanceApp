@@ -45,7 +45,7 @@ app.post('/signup', async(req, res) => {
     const encrypted = await bcrypt.hash(body.password, 10);
     console.log("adf", {...body, password: encrypted})
 
-    const result = await db.collection(COLLECTION_NAME).insertOne({...body, password: encrypted, stocks:[]});
+    const result = await db.collection(COLLECTION_NAME).insertOne({...body, password: encrypted, budget:[], stocks:[]});
 
     res.status(200).send({success: true, data: result});
   }catch(error){
@@ -106,7 +106,7 @@ app.post("/signin", async (req, res) => {
 })
 
 function auth(req, res, next) {
-  const token = req.headers["authorization"]?.splice (" ")[1];
+  const token = req.headers["authorization"]?.split(" ")[1];
   const key = PRIVATE_KEY;
 
   if(!token){
@@ -117,11 +117,62 @@ function auth(req, res, next) {
     if(err) {
       return res.status(401).send({success: false, error: err.message});
     }
-    req.currentUser = decoded;
+    // req.currentUser = decoded;
     next();
   })
 }
 app.use(auth);
+
+app.post("/budget/:email", async (req, res) => {
+  try{
+    console.log("yyy")
+    console.log("date", req.body.date, "email", req.params.email)
+    const check = await db.collection(COLLECTION_NAME).findOne({email: req.params.email, "budget.date": req.body.date});
+    console.log("Check", check)
+    let ret = null;
+    if(check){
+      console.log("one")
+      ret = await db.collection(COLLECTION_NAME).updateOne({email: req.params.email}, {$set:{"budget.$[obj].budget":req.body.budget}},
+       {arrayFilters: [{"obj.date": req.body.date}]});
+      console.log("one")
+    }else{
+      console.log("two1")
+      ret = await db.collection(COLLECTION_NAME).updateOne({email: req.params.email}, {$push:{budget:req.body}});
+      console.log("two")
+    }
+    console.log("ret", ret)
+    
+    res.status(200).send({success: true, data: ret});
+  }catch(error){
+    res.status(400).send({success: false, error: "db error"})
+  }
+})
+
+app.get("/getBudget/:date/:email", async (req, res) => {
+  console.log("hhaha")
+  try{
+    const ret = await db.collection(COLLECTION_NAME).findOne({email: req.params.email});
+    const check = ret.budget.filter((bud) => bud.date === req.params.date);
+    console.log("wha ti shcekc", check)
+    if(check){
+      res.status(200).send({success: true, data: check[0]})
+    }else{
+      res.status(200).send({success: true, data: null})
+    }    
+
+  }catch(error){
+    res.status(400).send({success:false, error: "db error"})
+  }
+})
+
+app.get("/userInfo/:email", async (req, res) => {
+  try{
+    const ret = await db.collection(COLLECTION_NAME).findOne({email: req.params.email});
+    res.status(200).send({success: false, data: {name: ret.name, address: ret.address, occupation: ret.occupation, email: ret.email, profileImg: ret.profileImg}});
+  }catch(error){
+    res.status(400).send({success:false, error: "db error"})
+  }
+})
 
 app.use((err, req, res, next) => {
   console.log(err.message);
