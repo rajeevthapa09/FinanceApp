@@ -1,14 +1,23 @@
-// import { useNavigate } from "react-router-dom";
-// import Profile from "./Profile";
+import { useNavigate } from "react-router-dom";
+import Profile from "./Profile";
+import Advisor from "./Advisor";
+import Stocks from "./Stocks"
 
 
-// export default function Headers(){
-//     // let navigate = useNavigate();
-//     // const goProfile = () => navigate("/viewProfile")
+export default function Header(){
+    let navigate = useNavigate();
+    const goProfile = () => navigate("/viewProfile")
 
-//     // return(
-//     //     <div>
-//     //         <button onClick={goProfile}>Profile</button>
-//     //     </div>
-//     // )
-// }
+    return(
+        <header>
+        <h1>Your Website Name</h1>
+        <nav>
+          <ul>
+            <li><Advisor /></li>
+            <li><Profile /></li>
+            <li><Stocks /></li>
+          </ul>
+        </nav>
+      </header>
+    )
+}

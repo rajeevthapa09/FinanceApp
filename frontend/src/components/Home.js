@@ -1,10 +1,15 @@
 
-import { useState, useRef } from "react";
+import { useState, useRef, useContext, useEffect } from "react";
 import { addBudget, getBudget } from "./network";
 import { useNavigate } from "react-router-dom";
+import GlobalContext from "./GlobalContext";
+import { CSVLink } from "react-csv"
+import Chart from "chart.js/auto"
+import { Pie } from "react-chartjs-2"
 
 export default function Home() {
 
+    const { state, setState } = useContext(GlobalContext)
 
     const yearRef = useRef();
     const monthRef = useRef();
@@ -36,16 +41,19 @@ export default function Home() {
             console.log(error)
         }
     }
+    useEffect( () => {
+        setState({...state})
+    },[])
 
-    const viewBudget = async() => {
-        try{
+    const viewBudget = async () => {
+        try {
             console.log("date", `${yearRef.current.value}-${monthRef.current.value}`)
-            const ret = await getBudget(`${yearRef.current.value}-${monthRef.current.value}`);
-            console.log(ret.data);
+            const ret = await getBudget(`${yearRef.current.value}-${monthRef.current.value}`, state.user);
+            console.log(ret.data, "viewBudget");
             // setBudget({...budget, wages: ret.wages, otherIncome: ret.otherIncome, rent: ret.rent, groceries: ret.groceries});
-            if(ret.data){
-                setBudget({...ret.data.budget})
-            }else{
+            if (ret.data) {
+                setBudget({ ...ret.data.budget })
+            } else {
                 setBudget({
                     wages: { expected: "", actual: "", notes: "" },
                     otherIncome: { expected: "", actual: "", notes: "" },
@@ -53,15 +61,56 @@ export default function Home() {
                     groceries: { expected: "", actual: "", notes: "" }
                 });
             }
-            
-        }catch(error){
+
+        } catch (error) {
             console.log(error);
         }
     }
-    // let navigate = useNavigate();
-    // const viewProfile = () => {
-    //     navigate("/viewProfile")
-    // }
+    let navigate = useNavigate();
+    const goProfile = () => {
+        navigate("/viewProfile")
+    }
+    const csvData = [
+        ["Categories", "Expected", "Actual", "Notes"],
+        ["wages", budget.wages.expected, budget.wages.actual, budget.wages.notes],
+        ["Other Income", budget.otherIncome.expected, budget.otherIncome.actual, budget.otherIncome.notes],
+        ["Rent", budget.rent.expected, budget.rent.actual, budget.rent.notes],
+        ["Groceries", budget.groceries.expected, budget.groceries.actual, budget.groceries.notes],
+        ["Total Income", totalIncome],
+        ["Total Expense", totalExpense],
+        ["Savings", totalIncome - totalExpense]
+    ]
+
+    const pieData = {
+        labels: ["Wages", "Other Income", "Rent/Mortgage", "Groceries"],
+        datasets: [
+            {
+                label: "Income/Expenses",
+                data: [budget.wages.actual, budget.otherIncome.actual, budget.rent.actual, budget.groceries.actual],
+                backgroundColor: [
+                    "#007D9C",
+                    "#244D70",
+                    "#D123B3",
+                    "#F7E018"
+                ],
+                borderColor: [
+                    "rgba(255,99,132,1)",
+                    "rgba(54, 162, 235, 1)",
+                    "rgba(255, 206, 86, 1)",
+                    "rgba(75, 192, 192, 1)"
+                ],
+                borderWidth: 1,
+            },
+        ],
+    };
+
+    const getAdvisor = () => {
+        navigate("/bookAdvisor")
+    }
+
+    const getStocks = () => {
+        navigate("/stocks")
+    }
 
 
     return (
@@ -89,6 +138,7 @@ export default function Home() {
                 <option value="12">Dec</option>
             </select>
             <button onClick={viewBudget}>View Budget</button>
+            <CSVLink data={csvData}>Convert to CSV</CSVLink>
 
             <table>
                 <tr>
@@ -193,193 +243,6 @@ export default function Home() {
                         />
                     </td>
                 </tr>
-                {/*  <tr>
-                    <td>Restaurants</td>
-                    <td>
-                        <input
-                            type="text"
-                            value={budgetData.restaurants.expected}
-                            onChange={(e) => updateBudgetData('restaurants', 'expected', e.target.value)}
-                        />
-                    </td>
-                    <td>
-                        <input
-                            type="text"
-                            value={budgetData.restaurants.actual}
-                            onChange={(e) => updateBudgetData('restaurants', 'actual', e.target.value)}
-                        />
-                    </td>
-                    <td>
-                        <input
-                            type="text"
-                            value={budgetData.restaurants.difference}
-                            readOnly
-                        />
-                    </td>
-                    <td>
-                        <input
-                            type="text"
-                            value={budgetData.restaurants.notes}
-                            onChange={(e) => updateBudgetData('restaurants', 'notes', e.target.value)}
-                        />
-                    </td>
-                </tr>
-                <tr>
-                    <td>Insurance</td>
-                    <td>
-                        <input
-                            type="text"
-                            value={budgetData.insurance.expected}
-                            onChange={(e) => updateBudgetData('insurance', 'expected', e.target.value)}
-                        />
-                    </td>
-                    <td>
-                        <input
-                            type="text"
-                            value={budgetData.insurance.actual}
-                            onChange={(e) => updateBudgetData('insurance', 'actual', e.target.value)}
-                        />
-                    </td>
-                    <td>
-                        <input
-                            type="text"
-                            value={budgetData.insurance.difference}
-                            readOnly
-                        />
-                    </td>
-                    <td>
-                        <input
-                            type="text"
-                            value={budgetData.insurance.notes}
-                            onChange={(e) => updateBudgetData('insurance', 'notes', e.target.value)}
-                        />
-                    </td>
-                </tr>
-                <tr>
-                    <td>Utilities</td>
-                    <td>
-                        <input
-                            type="text"
-                            value={budgetData.utilities.expected}
-                            onChange={(e) => updateBudgetData('utilities', 'expected', e.target.value)}
-                        />
-                    </td>
-                    <td>
-                        <input
-                            type="text"
-                            value={budgetData.utilities.actual}
-                            onChange={(e) => updateBudgetData('utilities', 'actual', e.target.value)}
-                        />
-                    </td>
-                    <td>
-                        <input
-                            type="text"
-                            value={budgetData.utilities.difference}
-                            readOnly
-                        />
-                    </td>
-                    <td>
-                        <input
-                            type="text"
-                            value={budgetData.utilities.notes}
-                            onChange={(e) => updateBudgetData('utilities', 'notes', e.target.value)}
-                        />
-                    </td>
-                </tr>
-                <tr>
-                    <td>Gas</td>
-                    <td>
-                        <input
-                            type="text"
-                            value={budgetData.gas.expected}
-                            onChange={(e) => updateBudgetData('gas', 'expected', e.target.value)}
-                        />
-                    </td>
-                    <td>
-                        <input
-                            type="text"
-                            value={budgetData.gas.actual}
-                            onChange={(e) => updateBudgetData('gas', 'actual', e.target.value)}
-                        />
-                    </td>
-                    <td>
-                        <input
-                            type="text"
-                            value={budgetData.gas.difference}
-                            readOnly
-                        />
-                    </td>
-                    <td>
-                        <input
-                            type="text"
-                            value={budgetData.gas.notes}
-                            onChange={(e) => updateBudgetData('gas', 'notes', e.target.value)}
-                        />
-                    </td>
-                </tr>
-                <tr>
-                    <td>Entertainment</td>
-                    <td>
-                        <input
-                            type="text"
-                            value={budgetData.entertainment.expected}
-                            onChange={(e) => updateBudgetData('entertainment', 'expected', e.target.value)}
-                        />
-                    </td>
-                    <td>
-                        <input
-                            type="text"
-                            value={budgetData.entertainment.actual}
-                            onChange={(e) => updateBudgetData('entertainment', 'actual', e.target.value)}
-                        />
-                    </td>
-                    <td>
-                        <input
-                            type="text"
-                            value={budgetData.entertainment.difference}
-                            readOnly
-                        />
-                    </td>
-                    <td>
-                        <input
-                            type="text"
-                            value={budgetData.entertainment.notes}
-                            onChange={(e) => updateBudgetData('entertainment', 'notes', e.target.value)}
-                        />
-                    </td>
-                </tr>
-                <tr>
-                    <td>Loans</td>
-                    <td>
-                        <input
-                            type="text"
-                            value={budgetData.loans.expected}
-                            onChange={(e) => updateBudgetData('loans', 'expected', e.target.value)}
-                        />
-                    </td>
-                    <td>
-                        <input
-                            type="text"
-                            value={budgetData.loans.actual}
-                            onChange={(e) => updateBudgetData('loans', 'actual', e.target.value)}
-                        />
-                    </td>
-                    <td>
-                        <input
-                            type="text"
-                            value={budgetData.loans.difference}
-                            readOnly
-                        />
-                    </td>
-                    <td>
-                        <input
-                            type="text"
-                            value={budgetData.loans.notes}
-                            onChange={(e) => updateBudgetData('loans', 'notes', e.target.value)}
-                        />
-                    </td>
-                </tr> */}
-
             </table>
             <table>
                 <tr>
@@ -402,6 +265,10 @@ export default function Home() {
                 </tr>
             </table>
             <button onClick={submitBudget}>Submit</button>
+            <div style={{width: "350px", height: "350px"}}><Pie data={pieData} width={20} height={20} /></div>
+            <button onClick={goProfile}>Profile</button>
+            <button onClick={getAdvisor}>Advisor List</button>
+            <button onClick={getStocks}>Stocks</button>
         </div>
     )
 }

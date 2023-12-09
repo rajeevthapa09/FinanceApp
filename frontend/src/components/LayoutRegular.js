@@ -7,6 +7,8 @@ import ViewMsg from "./ViewMsg"
 import Stocks from "./Stocks"
 import Savings from "./Savings"
 import BuySellStocks from "./BuySellStocks";
+import AdvisorList from "./AdvisorList";
+import Payment from "./Payment"
 
 const myrouter = createBrowserRouter([
     {
@@ -19,7 +21,7 @@ const myrouter = createBrowserRouter([
     },
     {
         path: "/bookAdvisor",
-        element: <BookAdvisor />
+        element: <AdvisorList />
     },
     {
         path: "/viewMsg",
@@ -30,8 +32,8 @@ const myrouter = createBrowserRouter([
         element: <Stocks />
     },
     {
-        path: "/buysellstocks",
-        element: <BuySellStocks />
+        path: "/makePayment",
+        element: <Payment />
     },
     {
         path: "/viewSavings",

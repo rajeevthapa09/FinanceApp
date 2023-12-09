@@ -6,6 +6,19 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken")
 const PRIVATE_KEY = "finance";
 let db = null;
+const { Client } = require('square');
+const { randomUUID } = require('crypto');
+// import { Client } from 'square';
+// import { randomUUID } from 'crypto';
+
+BigInt.prototype.toJSON = function () {
+  return this.toString();
+};
+
+const {paymentsApi} = new Client({
+  accessToken: "EAAAEGJV2D6hdYb5laYRRgZKa7cUhe7HgqzC0zyuhUVmX7-hDymlGmgio_o35KuF",
+  environment: 'sandbox'
+})
 
 require('dotenv').config();
 
@@ -53,28 +66,6 @@ app.post('/signup', async(req, res) => {
   }
 })
 
-// app.post("/addStocks", async (req, res) => {
-//   try{
-//     console.log("date" , new Date());
-//     const body = req.body;
-//     console.log("body", body)
-//     const addStocks = await db.collection("stocks").insertOne({...body, date: new Date()});
-//     res.status(200).send({success:true, data: addStocks});
-//   }catch(error){
-//     console.log(error);
-//   }
-// })
-
-// app.post("/addTransaction", async(req, res) => {
-//   try{
-//     const body = req.body;
-//     const addTransaction = await db.collection(COLLECTION_NAME).insertOne({"email": "test@test.edu"},{$push: {stocks: {...body, date: new Date()}}})
-//     res.status(200).send({success: true, data:addTransaction});
-//   }catch(error){
-//     console.log(error);
-//   }
-// })
-
 app.post("/signin", async (req, res) => {
   try{
     const body = req.body;
@@ -83,7 +74,7 @@ app.post("/signin", async (req, res) => {
     if (currentUser) {
       const correctPwd = await bcrypt.compare(body.password, currentUser.password);
       if (correctPwd){
-        const token = jwt.sign({ userID: currentUser._id, email: currentUser.email }, PRIVATE_KEY);
+        const token = jwt.sign({ email: currentUser.email }, PRIVATE_KEY);
 
         return res.send({
           success: true,
@@ -106,9 +97,11 @@ app.post("/signin", async (req, res) => {
 })
 
 function auth(req, res, next) {
+  console.log("ATUTUTUTU")
   const token = req.headers["authorization"]?.split(" ")[1];
   const key = PRIVATE_KEY;
 
+  console.log("token is: ", token);
   if(!token){
     return res.status(401).send({success: false, error: "Please provide token"});
   }
@@ -168,11 +161,57 @@ app.get("/getBudget/:date/:email", async (req, res) => {
 app.get("/userInfo/:email", async (req, res) => {
   try{
     const ret = await db.collection(COLLECTION_NAME).findOne({email: req.params.email});
-    res.status(200).send({success: false, data: {name: ret.name, address: ret.address, occupation: ret.occupation, email: ret.email, profileImg: ret.profileImg}});
+    res.status(200).send({success: true, data: {name: ret.name, address: ret.address, role: ret.role, occupation: ret.occupation, email: ret.email, profileImg: ret.profileImg}});
   }catch(error){
     res.status(400).send({success:false, error: "db error"})
   }
 })
+
+
+app.get("/getAdvisorInfo", async (req, res) => {
+  try{
+    const ret = await db.collection(COLLECTION_NAME).find({role: "advisor"}).toArray();
+    res.status(200).send({success: true, data: ret});
+  }catch(error){
+    res.status(400).send({success:false, error: "db error"});
+  }
+})
+
+// export default async function handler(req, res) {
+//   if ( req.method === 'POST' ) {
+//     const { result } = await paymentsApi.createPayment({
+//       idempotencyKey: randomUUID(),
+//       sourceId: req.body.sourceId,
+//       amountMoney: {
+//         currency: 'USD',
+//         amount: 100
+//       }
+//     })
+//     console.log(result);
+//     res.status(200).json(result);
+//   } else {
+//     res.status(500).send();
+//   }
+// }
+
+app.post("/api/pay", async (req, res) => {
+  try {
+    const { result } = await paymentsApi.createPayment({
+      idempotencyKey: randomUUID(),
+      sourceId: req.body.sourceId,
+      amountMoney: {
+        currency: 'USD',
+        amount: 100
+      }
+    })
+    console.log(result);
+
+    res.status(200).json({ success: true, message: "Payment successful" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, error: "Payment failed" });
+  }
+});
 
 app.use((err, req, res, next) => {
   console.log(err.message);

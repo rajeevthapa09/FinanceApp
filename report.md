@@ -55,3 +55,8 @@
 * Yesterday: Felt sick all day. Worked on Advisor page a bit. Worked on budget page. 
 * Today: Try to get everything I can do to complete the project
 * Block: Medicine side effects
+
+## 12/08/2023
+* Yesterday: worked on building budget history, adding profile page. 
+* Today: complete the project as much as I Can
+* Block: n/a

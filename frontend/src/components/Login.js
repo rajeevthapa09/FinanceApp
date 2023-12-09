@@ -14,7 +14,6 @@ export default function Login() {
         setUser({ ...user, [e.target.name]: e.target.value })
     }
 
-
     const loginHandle = async (e) => {
         if (e.target.value === "Signup") {
             navigate("/signup");
@@ -31,7 +30,6 @@ export default function Login() {
                     }else{
                         setState({...state, user: user.email, role: false, token: res.data.token});
                     }
-                    
                 }
             } catch (error) {
 
