@@ -9,22 +9,8 @@ export default function Payment() {
         <div className={styles.container}>
             <PaymentForm
                 applicationId="sandbox-sq0idb-kvgCIj7zhlw6wBraXsf3rw"
-                // cardTokenizeResponseReceived={(token, verifiedBuyer) => {
-                //     console.log('token:', token);
-                //     console.log('verifiedBuyer:', verifiedBuyer);
-                // }}
-                cardTokenizeResponseReceived={async (token, verifiedBuyer) => {
-                    // const response = await fetch("/api/pay", {
-                    //   method: "POST",
-                    //   headers: {
-                    //     "Content-type": "application/json",
-                    //   },
-                    //   body: JSON.stringify({
-                    //     sourceId: token.token,
-                    //   }),
-                    // });
 
-                    // console.log(await response.json());
+                cardTokenizeResponseReceived={async (token, verifiedBuyer) => {
                     try{
                         const response = await paymentHandler({sourceId: token.token});
                         console.log("payment", response);

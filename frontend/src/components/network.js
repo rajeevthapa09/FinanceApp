@@ -68,6 +68,7 @@ export async function getAdvisorInfo(){
     }
 }
 
+
 export async function getStockInfo(stockName){
     axios.defaults.baseURL = "https://api.marketdata.app/v1/stocks/quotes";
     const url = `/${stockName}/?token=Sm5URGF1NTc2Y0ItcWpBSS16c2FvRDh4b3RoZy1aWDI1dXpWZi1zTkxfQT0`;
