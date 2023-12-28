@@ -9,9 +9,6 @@ import Savings from "./Savings"
 import BuySellStocks from "./BuySellStocks";
 import AdvisorList from "./AdvisorList";
 import Payment from "./Payment"
-import ProfileTest from "./ProfileTest"
-import AdvisorTest from "./AdvistorTest";
-import StockTest from "./StockTest";
 
 const myrouter = createBrowserRouter([
     {
@@ -20,11 +17,11 @@ const myrouter = createBrowserRouter([
     },
     {
         path: "/viewProfile",
-        element: <ProfileTest />
+        element: <Profile />
     },
     {
         path: "/bookAdvisor",
-        element: <AdvisorTest />
+        element: <AdvisorList />
     },
     {
         path: "/viewMsg",
@@ -32,7 +29,7 @@ const myrouter = createBrowserRouter([
     },
     {
         path: "/stocks",
-        element: <StockTest />
+        element: <Stocks />
     },
     {
         path: "/makePayment",

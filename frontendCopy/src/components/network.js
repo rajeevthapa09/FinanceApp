@@ -25,7 +25,6 @@ export async function login(email, password){
 }
 
 export async function addBudget(budget){
-    console.log("budget", budget)
     const url = `/budget/${userEmail}`;
     try{
         console.log("therer")
@@ -38,48 +37,37 @@ export async function addBudget(budget){
 }
 
 export async function getBudget(date, userEmail){
-    const url = `/getBudget/${date}/${userEmail}`
+    console.log("getbudg", date)
+    const url = `/getBudget/${date}/${userEmail}`;
     try{
-        const res = await axios.get(url)
+        console.log("url", url)
+        const res = await axios.get(url);
         return res.data;
-
     }catch(error){
         return null;
     }
 }
 
-export async function getUserInfo(userEmail){
-    const url = `/userinfo/${userEmail}`
+export async function getUserInfo(){
+    const url = `/userInfo/${userEmail}`;
     try{
         const res = await axios.get(url);
         return res.data;
-
     }catch(error){
         return null;
     }
 }
 
 export async function getAdvisorInfo(){
-    const url="/getAdvisorInfo"
-    try{
-        const ret = await axios.get(url);
-        return ret.data;
-    }catch(error){
-        return null;
-    }
-
-}
-
-export async function getStockInfo1(stockName){
-    axios.defaults.baseURL = "https://api.marketdata.app/v1/stocks/quotes";
-    const url = `/${stockName}/?token=fsfdsfsdfsdfsdfsdfsdfdsfsdfsf`;
+    const url = "/getAdvisorInfo";
     try{
         const res = await axios.get(url);
-        return res.data
+        return res.data;
     }catch(error){
         return null;
     }
 }
+
 
 export async function getStockInfo(stockName){
     axios.defaults.baseURL = "https://api.marketdata.app/v1/stocks/quotes";
