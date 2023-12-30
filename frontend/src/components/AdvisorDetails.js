@@ -9,7 +9,7 @@ export default function AdvisorDetails({advise}){
             Name: {advise.name} <br />
             Email: {advise.email}<br />
             Address: {advise.address}<br />
-            <button>Send Request</button>
+            <button>Send Requests</button>
             <br /><br />
         </div>
     )
