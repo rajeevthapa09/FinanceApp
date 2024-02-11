@@ -130,7 +130,6 @@ export default function Home() {
                     <td><input value={budget.wages.expected} type="text" onChange={(e) => updateBudget("wages", "expected", e.target.value)} /></td>
                     <td><input value={budget.wages.actual} type="text" onChange={(e) => updateBudget("wages", "actual", e.target.value)} /></td>
                     <td><input value={budget.wages.notes} type="text" onChange={(e) => updateBudget("wages", "notes", e.target.value)} /></td>
-                    <td><input value={budget.wages.notes} type="text" onChange={(e) => updateBudget("wages", "expected", e.target.value)} /></td>
                 </tr>
                 <tr>
                     <td>Other Income</td>

@@ -35,19 +35,19 @@ export default function Signup(){
 
     return(
         <div>
-            <label>Name : </label><input type="text" value={user.fname} onChange={change} name="fname" />
-            <label>Address : </label><input type="text" value={user.address} onChange={change} name="address" />
-            <label>Occupation : </label><input type="text" value={user.occupation} onChange={change} name="occupation" />
+            <label>Name : </label><input type="text" value={user.fname} onChange={change} name="fname" /> <br />
+            <label>Address : </label><input type="text" value={user.address} onChange={change} name="address" /><br />
+            <label>Occupation : </label><input type="text" value={user.occupation} onChange={change} name="occupation" /><br />
             <label>Role : </label>
             <select value={user.role} onChange={change} name="role">
                 <option value={UserRole.ADVISOR}>Advisor</option>
                 <option value={UserRole.REGULAR}>Regular</option>
             </select>
             
-            <input type="text" value={user.role} onChange={change} name="role" />
-            <label>Email : </label><input type="text" value={user.email} onChange={change} name="email" />
-            <label>Password : </label><input type="password" value={user.password} onChange={change} name="password" />
-            <label>Profile Pic : </label><input type="text" value={user.profileImg} onChange={change} name="profileImg" />
+            <input type="text" value={user.role} onChange={change} name="role" /><br />
+            <label>Email : </label><input type="text" value={user.email} onChange={change} name="email" /><br />
+            <label>Password : </label><input type="password" value={user.password} onChange={change} name="password" /> <br />
+            <label>Profile Pic : </label><input type="text" value={user.profileImg} onChange={change} name="profileImg" /><br />
             <button onClick={loginHandle} value="login">Back to Login</button><button onClick={loginHandle} value="signup">Signup</button>
         </div>
     )
