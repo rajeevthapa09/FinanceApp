@@ -38,9 +38,11 @@ export default function Login() {
     }
 
     return (
-        <div>
-            <label>Email : </label><input type="text" placeholder="Enter Email" value={user.email} onChange={change} name="email" />
-            <label>Password : </label><input type="password" placeholder="Enter Password" value={user.password} onChange={change} name="password" />
+        <div style={{marginLeft: 100, marginRight:100, textAlign: "center"}}>
+            <p style={{fontSize: 50}}>FINT</p>
+            <p style={{fontSize: 10}}>Master your Finance</p>
+            <label>Email : </label><input type="text" placeholder="Enter Email" value={user.email} onChange={change} name="email" /><br />
+            <label>Password : </label><input type="password" placeholder="Enter Password" value={user.password} onChange={change} name="password" /><br />
             <button onClick={loginHandle} value="Login">Login</button>
             <button onClick={loginHandle} value="Signup">Signup</button>
         </div>

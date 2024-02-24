@@ -5,8 +5,16 @@ const userEmail = localStorage.getItem("userEmail")
 
 export async function signup(user){
     const url ="/signup";
+    console.log("hherher");
+    
+    const formData = new FormData();
+    for(const key in user){
+        formData.append(key, user[key]);
+    }
     try{
-        const res = await axios.post(url, user);
+        const res = await axios.post(url, formData, {headers : {
+            'Content-Type': 'multipart/form-data'
+        }});
         return res.data;
     }catch (error){
         console.log(error.message);
@@ -48,10 +56,11 @@ export async function getBudget(date, userEmail){
     }
 }
 
-export async function getUserInfo(userEmail){
+export async function getUserInfo(){
     const url = `/userinfo/${userEmail}`
     try{
         const res = await axios.get(url);
+        console.log("network", res);
         return res.data;
 
     }catch(error){

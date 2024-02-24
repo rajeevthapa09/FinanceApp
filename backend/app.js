@@ -1,15 +1,18 @@
 const {MongoClient} = require('mongodb');
 const express = require("express");
 const cors = require('cors');
+const multer = require('multer');
 const COLLECTION_NAME = "personalFinance"
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken")
+const path = require("path");
 const PRIVATE_KEY = "finance";
 let db = null;
 const { Client } = require('square');
 const { randomUUID } = require('crypto');
 // import { Client } from 'square';
 // import { randomUUID } from 'crypto';
+
 
 BigInt.prototype.toJSON = function () {
   return this.toString();
@@ -43,13 +46,43 @@ async function connectDB(){
 
 connectDB();
 
+//check for the extension of an image
+const getExtension = file =>{
+  if(file.mimetype === "image/jpeg"){
+    ext = ".jpg"
+  }else{
+    ext = ".png"
+  }
+  return ext
+}
+
+//initialize multer
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, '../public/images'))
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.fieldname + '-' + Date.now() + getExtension(file))
+  }
+})
+const upload = multer({storage})
+
+
 //signup
-app.post('/signup', async(req, res) => {
+app.post('/signup', upload.single('profileImg'), async(req, res) => {
+  console.log("111");
+  console.log("dest" + req.file.filename);
+
   try{
     const body = req.body;
+    body.profileImg = req.file.filename;
+    console.log("body is", body)
     
     const newUser = await db.collection(COLLECTION_NAME).find({ email: body.email }).toArray();
+    console.log("newUser", newUser)
+    
     if (newUser.length > 0) {
+      console.log("body is", "fdfdfdf")
       return res
         .status(409)
         .send({ success: false, error: "please use another email" });
@@ -57,9 +90,7 @@ app.post('/signup', async(req, res) => {
 
     const encrypted = await bcrypt.hash(body.password, 10);
     console.log("adf", {...body, password: encrypted})
-
     const result = await db.collection(COLLECTION_NAME).insertOne({...body, password: encrypted, budget:[], stocks:[]});
-
     res.status(200).send({success: true, data: result});
   }catch(error){
     res.status(500).send({success: false, err: "DB error"})
@@ -97,7 +128,6 @@ app.post("/signin", async (req, res) => {
 })
 
 function auth(req, res, next) {
-  console.log("ATUTUTUTU")
   const token = req.headers["authorization"]?.split(" ")[1];
   const key = PRIVATE_KEY;
 
@@ -161,7 +191,8 @@ app.get("/getBudget/:date/:email", async (req, res) => {
 app.get("/userInfo/:email", async (req, res) => {
   try{
     const ret = await db.collection(COLLECTION_NAME).findOne({email: req.params.email});
-    res.status(200).send({success: true, data: {name: ret.name, address: ret.address, role: ret.role, occupation: ret.occupation, email: ret.email, profileImg: ret.profileImg}});
+    const profileImgUrl = `/images/${ret.profileImg}`
+    res.status(200).send({success: true, data: {name: ret.name, address: ret.address, role: ret.role, occupation: ret.occupation, email: ret.email, profileImg: profileImgUrl}});
   }catch(error){
     res.status(400).send({success:false, error: "db error"})
   }

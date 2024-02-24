@@ -47,7 +47,13 @@ export default function Signup(){
             <input type="text" value={user.role} onChange={change} name="role" /><br />
             <label>Email : </label><input type="text" value={user.email} onChange={change} name="email" /><br />
             <label>Password : </label><input type="password" value={user.password} onChange={change} name="password" /> <br />
-            <label>Profile Pic : </label><input type="text" value={user.profileImg} onChange={change} name="profileImg" /><br />
+            <label>Profile Pic : </label>
+            <input 
+                filename={user.profileImg}
+                onChange={e => setUser({...user, profileImg: e.target.files[0]})}
+                type="file"
+                accept="image/*"
+                ></input><br />
             <button onClick={loginHandle} value="login">Back to Login</button><button onClick={loginHandle} value="signup">Signup</button>
         </div>
     )

@@ -20,7 +20,7 @@ const myrouter = createBrowserRouter([
     },
     {
         path: "/viewProfile",
-        element: <ProfileTest />
+        element: <Profile />
     },
     {
         path: "/bookAdvisor",
