@@ -15,7 +15,8 @@ export default function Home() {
         wages: { expected: "", actual: "", notes: "" }, 
         otherIncome: { expected: "", actual: "", notes: "" },
         rent: { expected: "", actual: "", notes: "" }, 
-        groceries: { expected: "", actual: "", notes: "" }
+        groceries: { expected: "", actual: "", notes: "" },
+        limit: ""
     });
 
     // const updateBudget = (category, type, value) => {
@@ -32,11 +33,8 @@ export default function Home() {
 
     const totalIncome = (parseInt(budget.wages.actual) || 0) + (parseInt(budget.otherIncome.actual) || 0);
     const totalExpense = (parseInt(budget.rent.actual) || 0) + (parseInt(budget.groceries.actual) || 0);
-    console.log("month is: ", new Date().getMonth() + 1, "ree", new Date().getDay())
-
+    
     const submitBudget = async () => {
-        console.log(`${refYear.current.value} - ${refMonth.current.value}`);
-        console.log("budget is:  ", budget)
         const ret = await addBudget({ budget, date: `${refYear.current.value}-${refMonth.current.value}` });
         if (ret.success) {
             alert("successfully submitted");
@@ -46,13 +44,13 @@ export default function Home() {
     const viewBudget = async () => {
         try {
             const ret = await getBudget(`${refYear.current.value}-${refMonth.current.value}`, state.user)
-            console.log("fsdfd", ret.data);
             if (ret.data) {
                 setBudget({ ...ret.data.budget });
             } else {
                 setBudget({
                     wages: { expected: "", actual: "", notes: "" }, otherIncome: { expected: "", actual: "", notes: "" },
-                    rent: { expected: "", actual: "", notes: "" }, groceries: { expected: "", actual: "", notes: "" }
+                    rent: { expected: "", actual: "", notes: "" }, groceries: { expected: "", actual: "", notes: "" },
+                    limit:""
                 })
             }
 
@@ -115,7 +113,8 @@ export default function Home() {
                 <option value="12">December</option>
             </select>
             <button onClick={viewBudget}>View Budget</button>
-            <CSVLink data={csvData}>Convert to CSV</CSVLink>
+            <CSVLink data={csvData}>Convert to CSV</CSVLink><br />
+            <input placeholder="Set the budget limit" type="text" onChange = {e => setBudget({...budget, limit:e.target.value})} value={budget.limit}></input>
             
 
             <table>

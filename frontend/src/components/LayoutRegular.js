@@ -24,7 +24,7 @@ const myrouter = createBrowserRouter([
     },
     {
         path: "/bookAdvisor",
-        element: <AdvisorTest />
+        element: <AdvisorList />
     },
     {
         path: "/viewMsg",

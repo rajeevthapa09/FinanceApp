@@ -1,4 +1,4 @@
-const {MongoClient} = require('mongodb');
+const { MongoClient } = require('mongodb');
 const express = require("express");
 const cors = require('cors');
 const multer = require('multer');
@@ -10,15 +10,17 @@ const PRIVATE_KEY = "finance";
 let db = null;
 const { Client } = require('square');
 const { randomUUID } = require('crypto');
+const nodemailer = require("nodemailer")
 // import { Client } from 'square';
 // import { randomUUID } from 'crypto';
+
 
 
 BigInt.prototype.toJSON = function () {
   return this.toString();
 };
 
-const {paymentsApi} = new Client({
+const { paymentsApi } = new Client({
   accessToken: "EAAAEGJV2D6hdYb5laYRRgZKa7cUhe7HgqzC0zyuhUVmX7-hDymlGmgio_o35KuF",
   environment: 'sandbox'
 })
@@ -32,14 +34,17 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-async function connectDB(){ 
-  try{ 
+// Serve static files from the "public" directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+async function connectDB() {
+  try {
     let uri = process.env.DB_URI;
     const client = new MongoClient(uri);
     await client.connect();
     db = client.db("Finance");
     console.log('DB connected');
-  }catch(err){
+  } catch (err) {
     console.log(err);
   }
 }
@@ -47,10 +52,10 @@ async function connectDB(){
 connectDB();
 
 //check for the extension of an image
-const getExtension = file =>{
-  if(file.mimetype === "image/jpeg"){
+const getExtension = file => {
+  if (file.mimetype === "image/jpeg") {
     ext = ".jpg"
-  }else{
+  } else {
     ext = ".png"
   }
   return ext
@@ -59,71 +64,75 @@ const getExtension = file =>{
 //initialize multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../public/images'))
+    cb(null, path.join(__dirname, '/public/images'))
   },
   filename: (req, file, cb) => {
     cb(null, file.fieldname + '-' + Date.now() + getExtension(file))
   }
 })
-const upload = multer({storage})
+const upload = multer({ storage })
+
+//email
+const transporter = nodemailer.createTransport({
+  service: "Gmail",
+  auth: {
+    user: "xtasy09@gmail.com",
+    pass: "jrwh fpqs vjns shwi"
+  }
+});
+
 
 
 //signup
-app.post('/signup', upload.single('profileImg'), async(req, res) => {
-  console.log("111");
-  console.log("dest" + req.file.filename);
+app.post('/signup', upload.single('profileImg'), async (req, res) => {
 
-  try{
+  try {
     const body = req.body;
     body.profileImg = req.file.filename;
-    console.log("body is", body)
-    
+
     const newUser = await db.collection(COLLECTION_NAME).find({ email: body.email }).toArray();
-    console.log("newUser", newUser)
-    
+
     if (newUser.length > 0) {
-      console.log("body is", "fdfdfdf")
       return res
         .status(409)
         .send({ success: false, error: "please use another email" });
     }
 
     const encrypted = await bcrypt.hash(body.password, 10);
-    console.log("adf", {...body, password: encrypted})
-    const result = await db.collection(COLLECTION_NAME).insertOne({...body, password: encrypted, budget:[], stocks:[]});
-    res.status(200).send({success: true, data: result});
-  }catch(error){
-    res.status(500).send({success: false, err: "DB error"})
+    const result = await db.collection(COLLECTION_NAME).insertOne({ ...body, password: encrypted, budget: [], stocks: [] });
+    res.status(200).send({ success: true, data: result });
+  } catch (error) {
+    res.status(500).send({ success: false, err: "DB error" })
   }
 })
 
 app.post("/signin", async (req, res) => {
-  try{
+  try {
     const body = req.body;
 
-    const currentUser = await db.collection(COLLECTION_NAME).findOne({email: body.email});
+    const currentUser = await db.collection(COLLECTION_NAME).findOne({ email: body.email });
     if (currentUser) {
       const correctPwd = await bcrypt.compare(body.password, currentUser.password);
-      if (correctPwd){
+      if (correctPwd) {
         const token = jwt.sign({ email: currentUser.email }, PRIVATE_KEY);
 
         return res.send({
           success: true,
           data: {
             token,
-             email: currentUser.email,
-             role:currentUser.role
+            email: currentUser.email,
+            role: currentUser.role
           }
         })
       } else {
-        return res.send({ success:false, error: "wrong password"});
+        return res.send({ success: false, error: "wrong password" });
       }
     } else {
-      return res.send({success: false, error: "wrong password"});
+      return res.send({ success: false, error: "wrong password" });
     }
   }
-  catch(err){
-    res.send({success: false, error: "DB error"})
+  catch (err) {
+    res.send({ success: false, error: "DB error" })
   }
 })
 
@@ -132,13 +141,13 @@ function auth(req, res, next) {
   const key = PRIVATE_KEY;
 
   console.log("token is: ", token);
-  if(!token){
-    return res.status(401).send({success: false, error: "Please provide token"});
+  if (!token) {
+    return res.status(401).send({ success: false, error: "Please provide token" });
   }
 
   jwt.verify(token, key, (err, decoded) => {
-    if(err) {
-      return res.status(401).send({success: false, error: err.message});
+    if (err) {
+      return res.status(401).send({ success: false, error: err.message });
     }
     // req.currentUser = decoded;
     next();
@@ -147,64 +156,66 @@ function auth(req, res, next) {
 app.use(auth);
 
 app.post("/budget/:email", async (req, res) => {
-  try{
-    console.log("yyy")
-    console.log("date", req.body.date, "email", req.params.email)
-    const check = await db.collection(COLLECTION_NAME).findOne({email: req.params.email, "budget.date": req.body.date});
-    console.log("Check", check)
+
+  const totalExpense = (parseInt(req.body.budget.rent.actual) || 0) + (parseInt(req.body.budget.groceries.actual) || 0);
+  if(req.body.budget.limit && totalExpense > req.body.budget.limit ){
+    const mailOptions = {
+      from: "xtasy09@gmail.com",
+      to: "raj2evthapa@gmail.com",
+      subject: "Expenses Exceeded",
+      html: "Your expenses has exceeded your budget limit"
+    };
+    transporter.sendMail(mailOptions)
+  }
+  
+
+  try {
+    const check = await db.collection(COLLECTION_NAME).findOne({ email: req.params.email, "budget.date": req.body.date });
     let ret = null;
-    if(check){
-      console.log("one")
-      ret = await db.collection(COLLECTION_NAME).updateOne({email: req.params.email}, {$set:{"budget.$[obj].budget":req.body.budget}},
-       {arrayFilters: [{"obj.date": req.body.date}]});
-      console.log("one")
-    }else{
-      console.log("two1")
-      ret = await db.collection(COLLECTION_NAME).updateOne({email: req.params.email}, {$push:{budget:req.body}});
-      console.log("two")
+    if (check) {
+      ret = await db.collection(COLLECTION_NAME).updateOne({ email: req.params.email }, { $set: { "budget.$[obj].budget": req.body.budget } },
+        { arrayFilters: [{ "obj.date": req.body.date }] });
+    } else {
+      ret = await db.collection(COLLECTION_NAME).updateOne({ email: req.params.email }, { $push: { budget: req.body } });
     }
-    console.log("ret", ret)
-    
-    res.status(200).send({success: true, data: ret});
-  }catch(error){
-    res.status(400).send({success: false, error: "db error"})
+    res.status(200).send({ success: true, data: ret });
+  } catch (error) {
+    res.status(400).send({ success: false, error: "db error" })
   }
 })
 
 app.get("/getBudget/:date/:email", async (req, res) => {
-  console.log("hhaha")
-  try{
-    const ret = await db.collection(COLLECTION_NAME).findOne({email: req.params.email});
+  try {
+    const ret = await db.collection(COLLECTION_NAME).findOne({ email: req.params.email });
     const check = ret.budget.filter((bud) => bud.date === req.params.date);
-    console.log("wha ti shcekc", check)
-    if(check){
-      res.status(200).send({success: true, data: check[0]})
-    }else{
-      res.status(200).send({success: true, data: null})
-    }    
+    if (check) {
+      res.status(200).send({ success: true, data: check[0] })
+    } else {
+      res.status(200).send({ success: true, data: null })
+    }
 
-  }catch(error){
-    res.status(400).send({success:false, error: "db error"})
+  } catch (error) {
+    res.status(400).send({ success: false, error: "db error" })
   }
 })
 
 app.get("/userInfo/:email", async (req, res) => {
-  try{
-    const ret = await db.collection(COLLECTION_NAME).findOne({email: req.params.email});
-    const profileImgUrl = `/images/${ret.profileImg}`
-    res.status(200).send({success: true, data: {name: ret.name, address: ret.address, role: ret.role, occupation: ret.occupation, email: ret.email, profileImg: profileImgUrl}});
-  }catch(error){
-    res.status(400).send({success:false, error: "db error"})
+  try {
+    const ret = await db.collection(COLLECTION_NAME).findOne({ email: req.params.email });
+    console.log("email is", req.params.email)
+    // const profileImgUrl = `/images/${ret.profileImg}`
+    res.status(200).send({ success: true, data: { name: ret.name, address: ret.address, role: ret.role, occupation: ret.occupation, email: ret.email, profileImg: ret.profileImg } });
+  } catch (error) {
+    res.status(400).send({ success: false, error: "db error" })
   }
 })
 
-
 app.get("/getAdvisorInfo", async (req, res) => {
-  try{
-    const ret = await db.collection(COLLECTION_NAME).find({role: "advisor"}).toArray();
-    res.status(200).send({success: true, data: ret});
-  }catch(error){
-    res.status(400).send({success:false, error: "db error"});
+  try {
+    const ret = await db.collection(COLLECTION_NAME).find({ role: "advisor" }).toArray();
+    res.status(200).send({ success: true, data: ret });
+  } catch (error) {
+    res.status(400).send({ success: false, error: "db error" });
   }
 })
 
