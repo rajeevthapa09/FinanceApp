@@ -7,6 +7,7 @@ export default function Logout(){
     const logout = () => {
         localStorage.setItem("token", "");
         localStorage.setItem("userEmail", "");
+        localStorage.setItem("userId", "");
         setState({...state, token: null, user: "", role: true});
     }
     return(

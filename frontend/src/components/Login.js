@@ -23,12 +23,15 @@ export default function Login() {
                 const res = await login(user.email, user.password)
                 console.log("res", res)
                 if (res.success) {
+                    console.log("login", res.data)
                     localStorage.setItem("token", res.data.token);
                     localStorage.setItem("userEmail", res.data.email);
+                    localStorage.setItem("userId", res.data.userId);
                     if(res.data.role === "regular"){
-                        setState({...state, user: user.email, token: res.data.token});
+                        console.log("i am regular")
+                        setState({...state, user: user.email, token: res.data.token, userId: res.data.userId});
                     }else{
-                        setState({...state, user: user.email, role: false, token: res.data.token});
+                        setState({...state, user: user.email, role: false, token: res.data.token, userId: res.data.userId});
                     }
                 }
             } catch (error) {

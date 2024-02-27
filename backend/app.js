@@ -1,4 +1,4 @@
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 const express = require("express");
 const cors = require('cors');
 const multer = require('multer');
@@ -121,7 +121,8 @@ app.post("/signin", async (req, res) => {
           data: {
             token,
             email: currentUser.email,
-            role: currentUser.role
+            role: currentUser.role,
+            userId: currentUser._id
           }
         })
       } else {
@@ -137,6 +138,7 @@ app.post("/signin", async (req, res) => {
 })
 
 function auth(req, res, next) {
+  console.log("headres", req.headers)
   const token = req.headers["authorization"]?.split(" ")[1];
   const key = PRIVATE_KEY;
 
@@ -213,6 +215,39 @@ app.get("/userInfo/:email", async (req, res) => {
 app.get("/getAdvisorInfo", async (req, res) => {
   try {
     const ret = await db.collection(COLLECTION_NAME).find({ role: "advisor" }).toArray();
+    console.log("getAdvisor", ret)
+    res.status(200).send({ success: true, data: ret });
+  } catch (error) {
+    res.status(400).send({ success: false, error: "db error" });
+  }
+})
+
+const Status = {
+  PENDING: 'pending',
+  APPROVED: 'approved',
+  DECLINE: 'decline'
+}
+
+app.post("/reservation/user/:userID/advisor/:advisorID", async(req, res) => {
+
+  try{
+    const ret = await db.collection("reservation").insertOne({ userId: new ObjectId(req.params.userID), advisorId: new ObjectId(req.params.advisorID), requests: Status.PENDING, validTime:{}, payment:{}});
+    res.status(200).send({ success: true, data: ret });
+  } catch (error) {
+    res.status(400).send({ success: false, error: "db error" })
+  }
+})
+
+app.get("/getClientInfo/:advisorID", async (req, res) => {
+  try {
+    const ret = await db.collection("reservation").find({},{ requests: "pending", advisorId: new ObjectId(req.params.advisorID) }).toArray();
+    console.log("getclientinfo", ret)
+    let userList = [];
+    for(const usr of ret){
+      const retUsr = await db.collection(COLLECTION_NAME).findOne({ _id: new ObjectId(usr.userId) });
+      console.log("retUsr", retUsr);
+      userList.push(retUsr);
+    }
     res.status(200).send({ success: true, data: ret });
   } catch (error) {
     res.status(400).send({ success: false, error: "db error" });

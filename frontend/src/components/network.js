@@ -1,7 +1,9 @@
 import axios from 'axios'
 axios.defaults.baseURL = "http://localhost:5001";
-axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem("token")}`
+axios.defaults.headers.common['authorization'] = `Bearer ${localStorage.getItem("token")}`
 const userEmail = localStorage.getItem("userEmail")
+console.log(`Bearer ${localStorage.getItem("token")}`, "useremail", userEmail);
+const token = localStorage.getItem("token");
 
 export async function signup(user){
     const url ="/signup";
@@ -71,12 +73,41 @@ export async function getUserInfo(){
 export async function getAdvisorInfo(){
     const url="/getAdvisorInfo"
     try{
-        const ret = await axios.get(url);
+        const ret = await axios.get(url, {
+            headers:{'Authorization': `Bearer ${localStorage.getItem("token")}`}
+        });
+        console.log("advisor Info newtork", ret)
         return ret.data;
     }catch(error){
         return null;
     }
 
+}
+
+export async function getClientInfo(advisorID){
+    const url=`/getClientInfo/${advisorID}`
+    try{
+        const ret = await axios.get(url, {
+            headers:{'Authorization': `Bearer ${localStorage.getItem("token")}`}
+        });
+        console.log("client Info newtork", ret)
+        return ret.data;
+    }catch(error){
+        return null;
+    }
+
+}
+
+export async function setReservation(userID, advisorID){
+    const url=`/reservation/user/${userID}/advisor/${advisorID}`
+    try{
+        const ret = await axios.post(url, {
+            headers:{'Authorization': `Bearer ${localStorage.getItem("token")}`}
+        });
+        return ret.data;
+    }catch(error){
+        return null;
+    }
 }
 
 export async function getStockInfo1(stockName){

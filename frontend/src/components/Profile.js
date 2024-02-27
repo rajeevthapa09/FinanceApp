@@ -9,7 +9,6 @@ export default function Profile(){
 
     const userDetails = async() => {
         const ret = await getUserInfo();
-        console.log("profile", ret);
         setUserInfo(ret.data);
     }
 

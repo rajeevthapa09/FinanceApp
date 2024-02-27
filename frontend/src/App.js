@@ -11,15 +11,16 @@ import { useEffect } from 'react';
 
 
 function App() {
-  const [state, setState] = useState({ token: null, user: "", role: true });
+  const [state, setState] = useState({ token: null, user: "", role: true, userId:"" });
 
   const getToken = () => {
     try {
       const token = localStorage.getItem("token");
       if(token){
         const user = localStorage.getItem("userEmail");
+        const userId = localStorage.getItem("userId");
         console.log("user", user, "token", token);
-        setState({...state, token, user})
+        setState({...state, token, user, userId})
       }
     } catch (error) {
       console.log(error);
@@ -34,7 +35,7 @@ function App() {
     <div>
       <GlobalContext.Provider value={{ state, setState }}>
         {state.token ? <Logout /> : ""}
-        {state.user ? state.role ? <RouterProvider router={myrouter} /> : <RouterProvider router={advisorRouter} /> : <RouterProvider router={loginRouter} />}
+        {state.user ? (state.role ? <RouterProvider router={myrouter} /> : <RouterProvider router={advisorRouter} />) : <RouterProvider router={loginRouter} />}
       </GlobalContext.Provider>
     </div>
   );

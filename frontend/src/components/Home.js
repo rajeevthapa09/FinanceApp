@@ -83,6 +83,7 @@ export default function Home() {
     }
 
     const goAdvisor = () => {
+        console.log("home page: ", state);
         navigate("/bookAdvisor")
     }
 
