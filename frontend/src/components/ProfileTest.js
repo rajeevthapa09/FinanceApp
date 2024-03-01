@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 import GlobalContext from "./GlobalContext";
-import { getUserInfo } from "./network";
+import { getUserInfo } from './getUserInfo';
 
 
 export default function ProfileTest(){

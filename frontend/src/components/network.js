@@ -1,9 +1,9 @@
 import axios from 'axios'
 axios.defaults.baseURL = "http://localhost:5001";
-axios.defaults.headers.common['authorization'] = `Bearer ${localStorage.getItem("token")}`
-const userEmail = localStorage.getItem("userEmail")
-console.log(`Bearer ${localStorage.getItem("token")}`, "useremail", userEmail);
-const token = localStorage.getItem("token");
+// axios.defaults.headers.common['authorization'] = `Bearer ${localStorage.getItem("token")}`
+export const userEmail = localStorage.getItem("userEmail")
+// console.log(`Bearer ${localStorage.getItem("token")}`, "useremail", userEmail);
+// const token = localStorage.getItem("token");
 
 export async function signup(user){
     const url ="/signup";
@@ -58,20 +58,9 @@ export async function getBudget(date, userEmail){
     }
 }
 
-export async function getUserInfo(){
-    const url = `/userinfo/${userEmail}`
-    try{
-        const res = await axios.get(url);
-        console.log("network", res);
-        return res.data;
-
-    }catch(error){
-        return null;
-    }
-}
-
-export async function getAdvisorInfo(){
-    const url="/getAdvisorInfo"
+export async function getAdvisorInfo(userId){
+    const url=`/getAdvisorInfo/client/${userId}`
+    console.log("advisor network", userId)
     try{
         const ret = await axios.get(url, {
             headers:{'Authorization': `Bearer ${localStorage.getItem("token")}`}
@@ -81,7 +70,6 @@ export async function getAdvisorInfo(){
     }catch(error){
         return null;
     }
-
 }
 
 export async function getClientInfo(advisorID){
@@ -95,14 +83,40 @@ export async function getClientInfo(advisorID){
     }catch(error){
         return null;
     }
-
 }
 
 export async function setReservation(userID, advisorID){
     const url=`/reservation/user/${userID}/advisor/${advisorID}`
+    const token = localStorage.getItem("token");
     try{
-        const ret = await axios.post(url, {
-            headers:{'Authorization': `Bearer ${localStorage.getItem("token")}`}
+        const ret = await axios.post(url, null,{
+            headers:{'Authorization': `Bearer ${token}`}
+        });
+        return ret.data;
+    }catch(error){
+        return null;
+    }
+}
+
+export async function rejectClient(clientID, advisorID){
+    const url=`/rejectClient/advisor/${advisorID}/client/${clientID}`
+    const token = localStorage.getItem("token");
+    try{
+        const ret = await axios.put(url, null,{
+            headers:{'Authorization': `Bearer ${token}`}
+        });
+        return ret.data;
+    }catch(error){
+        return null;
+    }
+}
+
+export async function acceptClient(clientID, advisorID){
+    const url=`/acceptClient/advisor/${advisorID}/client/${clientID}`
+    const token = localStorage.getItem("token");
+    try{
+        const ret = await axios.put(url, null,{
+            headers:{'Authorization': `Bearer ${token}`}
         });
         return ret.data;
     }catch(error){

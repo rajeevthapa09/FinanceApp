@@ -138,7 +138,6 @@ app.post("/signin", async (req, res) => {
 })
 
 function auth(req, res, next) {
-  console.log("headres", req.headers)
   const token = req.headers["authorization"]?.split(" ")[1];
   const key = PRIVATE_KEY;
 
@@ -160,7 +159,7 @@ app.use(auth);
 app.post("/budget/:email", async (req, res) => {
 
   const totalExpense = (parseInt(req.body.budget.rent.actual) || 0) + (parseInt(req.body.budget.groceries.actual) || 0);
-  if(req.body.budget.limit && totalExpense > req.body.budget.limit ){
+  if (req.body.budget.limit && totalExpense > req.body.budget.limit) {
     const mailOptions = {
       from: "xtasy09@gmail.com",
       to: "raj2evthapa@gmail.com",
@@ -169,7 +168,7 @@ app.post("/budget/:email", async (req, res) => {
     };
     transporter.sendMail(mailOptions)
   }
-  
+
 
   try {
     const check = await db.collection(COLLECTION_NAME).findOne({ email: req.params.email, "budget.date": req.body.date });
@@ -212,11 +211,24 @@ app.get("/userInfo/:email", async (req, res) => {
   }
 })
 
-app.get("/getAdvisorInfo", async (req, res) => {
+app.get("/getAdvisorInfo/client/:clientID", async (req, res) => {
   try {
     const ret = await db.collection(COLLECTION_NAME).find({ role: "advisor" }).toArray();
-    console.log("getAdvisor", ret)
-    res.status(200).send({ success: true, data: ret });
+    const reservationStatus = await db.collection("reservation").find({ userId: new ObjectId(req.params.clientID) }).toArray();
+    console.log("ers Status", reservationStatus)
+    const reserveList = [];
+    for (const reservation of reservationStatus) {
+      const index = ret.findIndex(item => item._id.equals(reservation.advisorId)); // Finding index using findIndex
+      if (index !== -1) {
+        ret[index]['requests'] = reservation.requests;
+      }
+    }
+    for (const usr of ret) {
+      reserveList.push({ _id: usr._id, name: usr.name, address: usr.address, email: usr.email, requests: usr.requests, profileImg: usr.profileImg });
+    }
+
+    console.log("reservationList", ret);
+    res.status(200).send({ success: true, data: reserveList });
   } catch (error) {
     res.status(400).send({ success: false, error: "db error" });
   }
@@ -228,10 +240,10 @@ const Status = {
   DECLINE: 'decline'
 }
 
-app.post("/reservation/user/:userID/advisor/:advisorID", async(req, res) => {
+app.post("/reservation/user/:userID/advisor/:advisorID", async (req, res) => {
 
-  try{
-    const ret = await db.collection("reservation").insertOne({ userId: new ObjectId(req.params.userID), advisorId: new ObjectId(req.params.advisorID), requests: Status.PENDING, validTime:{}, payment:{}});
+  try {
+    const ret = await db.collection("reservation").insertOne({ userId: new ObjectId(req.params.userID), advisorId: new ObjectId(req.params.advisorID), requests: Status.PENDING, validTime: {}, payment: {} });
     res.status(200).send({ success: true, data: ret });
   } catch (error) {
     res.status(400).send({ success: false, error: "db error" })
@@ -240,17 +252,44 @@ app.post("/reservation/user/:userID/advisor/:advisorID", async(req, res) => {
 
 app.get("/getClientInfo/:advisorID", async (req, res) => {
   try {
-    const ret = await db.collection("reservation").find({},{ requests: "pending", advisorId: new ObjectId(req.params.advisorID) }).toArray();
+    const ret = await db.collection("reservation").find({ requests: "pending", advisorId: new ObjectId(req.params.advisorID) }).toArray();
     console.log("getclientinfo", ret)
     let userList = [];
-    for(const usr of ret){
+    for (const usr of ret) {
       const retUsr = await db.collection(COLLECTION_NAME).findOne({ _id: new ObjectId(usr.userId) });
       console.log("retUsr", retUsr);
-      userList.push(retUsr);
+      userList.push({ id: retUsr._id, name: retUsr.name, address: retUsr.address, occupation: retUsr.occupation, profileImg: retUsr.profileImg });
     }
-    res.status(200).send({ success: true, data: ret });
+    console.log("userList", userList);
+    res.status(200).send({ success: true, data: userList });
   } catch (error) {
     res.status(400).send({ success: false, error: "db error" });
+  }
+})
+
+app.put("/rejectClient/advisor/:advisorID/client/:clientID", async (req, res) => {
+
+  try {
+    const ret = await db.collection("reservation").updateOne(
+      { userId: new ObjectId(req.params.clientID), advisorId: new ObjectId(req.params.advisorID) },
+      { $set: { requests: Status.DECLINE } }
+    );
+    res.status(200).send({ success: true, data: ret });
+  } catch (error) {
+    res.status(400).send({ success: false, error: "db error" })
+  }
+})
+
+app.put("/acceptClient/advisor/:advisorID/client/:clientID", async (req, res) => {
+
+  try {
+    const ret = await db.collection("reservation").updateOne(
+      { userId: new ObjectId(req.params.clientID), advisorId: new ObjectId(req.params.advisorID), requests: Status.PENDING, validTime: {}, payment: {} },
+      { $set: { requests: Status.APPROVED } }
+    );
+    res.status(200).send({ success: true, data: ret });
+  } catch (error) {
+    res.status(400).send({ success: false, error: "db error" })
   }
 })
 

@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { getUserInfo } from "./network"
+import { getUserInfo } from './getUserInfo';
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 

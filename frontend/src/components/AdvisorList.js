@@ -8,10 +8,9 @@ export default function AdvisorList(){
     const [advisor, setAdvisor] = useState([]);
     const{state, setState} = useContext(GlobalContext)
 
-
     const advisorDetail = async() => {
         console.log("advisor list: ", state);
-        const ret = await getAdvisorInfo();
+        const ret = await getAdvisorInfo(state.userId);
         console.log("advisor", ret);
         setAdvisor(ret.data);
     }
@@ -25,5 +24,4 @@ export default function AdvisorList(){
             {advisor.map((person) => <AdvisorDetails advise={person} />)}
         </div>
     )
-
 }

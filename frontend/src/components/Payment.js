@@ -20,8 +20,6 @@ export default function Payment() {
                     }catch(error){
                         console.log(error);
                     }
-                    
-                    
                   }}
                 locationId='LH9HHZGA0BMHV'
             >

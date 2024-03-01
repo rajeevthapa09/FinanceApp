@@ -20,7 +20,9 @@ export default function AdvisorDetails({advise}){
             Name: {advise.name} <br />
             Email: {advise.email}<br />
             Address: {advise.address}<br />
-            <button onClick={sendReq} disabled={text}> {text ? "Request Sent" : "Send Requests"}</button>
+            
+            {advise.requests === "approved" ? (<span style={{color:"blue"}}>Requests Approved<button>Pay</button></span>) :
+              (advise.requests === "pending") ? (<button disabled>Request Pending</button>) : <button onClick={sendReq} disabled={text}> {text ? "Request Sent" : "Send Requests"}</button>}
             <br /><br />
         </div>
     )
