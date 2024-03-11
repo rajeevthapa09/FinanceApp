@@ -4,7 +4,7 @@ import { paymentHandler } from './network';
 
 //Card Number: 4111 1111 1111 1111, CVV: 111, Postal: 11111 (you can provide any postal code).
 
-export default function Payment() {
+export default function Payment({display, chat}) {
     return (
         <div className={styles.container}>
             <PaymentForm
@@ -16,6 +16,8 @@ export default function Payment() {
                         console.log("payment", response);
                         if(response){
                             alert("Payment Successful")
+                            display(false);
+                            chat(true);
                         }
                     }catch(error){
                         console.log(error);

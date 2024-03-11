@@ -12,6 +12,7 @@ import Payment from "./Payment"
 import ProfileTest from "./ProfileTest"
 import AdvisorTest from "./AdvistorTest";
 import StockTest from "./StockTest";
+import Chat from "./Chat";
 
 const myrouter = createBrowserRouter([
     {
@@ -45,6 +46,10 @@ const myrouter = createBrowserRouter([
     {
         path: "/pastBudget",
         element: <PastBudget />
+    },
+    {
+        path: "/chat",
+        element: <Chat />
     }
 ])
 

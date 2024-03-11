@@ -27,11 +27,13 @@ export default function Login() {
                     localStorage.setItem("token", res.data.token);
                     localStorage.setItem("userEmail", res.data.email);
                     localStorage.setItem("userId", res.data.userId);
+                    localStorage.setItem("userName", res.data.userName);
+
                     if(res.data.role === "regular"){
                         console.log("i am regular")
-                        setState({...state, user: user.email, token: res.data.token, userId: res.data.userId});
+                        setState({...state, user: user.email, token: res.data.token, userId: res.data.userId, userName: res.data.userName});
                     }else{
-                        setState({...state, user: user.email, role: false, token: res.data.token, userId: res.data.userId});
+                        setState({...state, user: user.email, role: false, token: res.data.token, userId: res.data.userId, userName: res.data.userName});
                     }
                 }
             } catch (error) {

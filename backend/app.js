@@ -89,7 +89,6 @@ app.post('/signup', upload.single('profileImg'), async (req, res) => {
   try {
     const body = req.body;
     body.profileImg = req.file.filename;
-
     const newUser = await db.collection(COLLECTION_NAME).find({ email: body.email }).toArray();
 
     if (newUser.length > 0) {
@@ -99,7 +98,7 @@ app.post('/signup', upload.single('profileImg'), async (req, res) => {
     }
 
     const encrypted = await bcrypt.hash(body.password, 10);
-    const result = await db.collection(COLLECTION_NAME).insertOne({ ...body, password: encrypted, budget: [], stocks: [] });
+    const result = await db.collection(COLLECTION_NAME).insertOne({ ...body, password: encrypted, budget: [], stocks: [], chat: [], reviews: [], monthlyAdvisingFee:0 });
     res.status(200).send({ success: true, data: result });
   } catch (error) {
     res.status(500).send({ success: false, err: "DB error" })
@@ -122,7 +121,8 @@ app.post("/signin", async (req, res) => {
             token,
             email: currentUser.email,
             role: currentUser.role,
-            userId: currentUser._id
+            userId: currentUser._id,
+            userName: currentUser.name
           }
         })
       } else {

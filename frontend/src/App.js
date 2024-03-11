@@ -11,7 +11,7 @@ import { useEffect } from 'react';
 
 
 function App() {
-  const [state, setState] = useState({ token: null, user: "", role: true, userId:"" });
+  const [state, setState] = useState({ token: null, user: "", role: true, userId:"", userName:"" });
 
   const getToken = () => {
     try {
@@ -19,8 +19,9 @@ function App() {
       if(token){
         const user = localStorage.getItem("userEmail");
         const userId = localStorage.getItem("userId");
+        const userName = localStorage.getItem("userName");
         console.log("user", user, "token", token);
-        setState({...state, token, user, userId})
+        setState({...state, token, user, userId, userName})
       }
     } catch (error) {
       console.log(error);

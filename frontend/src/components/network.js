@@ -124,17 +124,6 @@ export async function acceptClient(clientID, advisorID){
     }
 }
 
-export async function getStockInfo1(stockName){
-    axios.defaults.baseURL = "https://api.marketdata.app/v1/stocks/quotes";
-    const url = `/${stockName}/?token=fsfdsfsdfsdfsdfsdfsdfdsfsdfsf`;
-    try{
-        const res = await axios.get(url);
-        return res.data
-    }catch(error){
-        return null;
-    }
-}
-
 export async function getStockInfo(stockName){
     axios.defaults.baseURL = "https://api.marketdata.app/v1/stocks/quotes";
     const url = `/${stockName}/?token=Sm5URGF1NTc2Y0ItcWpBSS16c2FvRDh4b3RoZy1aWDI1dXpWZi1zTkxfQT0`;
@@ -147,10 +136,14 @@ export async function getStockInfo(stockName){
 }
 
 export async function paymentHandler(obj) {
-    axios.defaults.baseURL = "http://localhost:5001";
-
+    // axios.defaults.baseURL = "http://localhost:5001";
+    console.log("payment")
+    const token = localStorage.getItem("token"); 
     try{
-        const response = await axios.post("/api/pay", obj);
+        console.log("network token", token)
+        const response = await axios.post("/api/pay", obj,{
+            headers:{'Authorization': `Bearer ${token}`}
+        });
         return response.data;
     }catch(error){
         return null;
