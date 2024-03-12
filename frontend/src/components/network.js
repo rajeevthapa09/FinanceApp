@@ -124,6 +124,34 @@ export async function acceptClient(clientID, advisorID){
     }
 }
 
+export async function sentMsg(userID, advisorID, message){
+    console.log("message is", message)
+    const url=`/message/user/${userID}/advisor/${advisorID}`
+    const token = localStorage.getItem("token");
+    try{
+        const ret = await axios.post(url, {message},{
+            headers:{'Authorization': `Bearer ${token}`}
+        });
+        return ret.data;
+    }catch(error){
+        return null;
+    }
+}
+
+export async function getMessages(userID, advisorID){
+    const url=`/message/${userID}/advisor/${advisorID}`
+    console.log("getMsg userid", userID, "advisorId", advisorID);
+    try{
+        const ret = await axios.get(url, {
+            headers:{'Authorization': `Bearer ${localStorage.getItem("token")}`}
+        });
+        console.log("netw return msg", ret.data)
+        return ret.data;
+    }catch(error){
+        return null;
+    }
+}
+
 export async function getStockInfo(stockName){
     axios.defaults.baseURL = "https://api.marketdata.app/v1/stocks/quotes";
     const url = `/${stockName}/?token=Sm5URGF1NTc2Y0ItcWpBSS16c2FvRDh4b3RoZy1aWDI1dXpWZi1zTkxfQT0`;

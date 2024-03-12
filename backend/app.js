@@ -98,7 +98,7 @@ app.post('/signup', upload.single('profileImg'), async (req, res) => {
     }
 
     const encrypted = await bcrypt.hash(body.password, 10);
-    const result = await db.collection(COLLECTION_NAME).insertOne({ ...body, password: encrypted, budget: [], stocks: [], chat: [], reviews: [], monthlyAdvisingFee:0 });
+    const result = await db.collection(COLLECTION_NAME).insertOne({ ...body, password: encrypted, budget: [], stocks: [], chat: [], reviews: [], monthlyAdvisingFee: 0 });
     res.status(200).send({ success: true, data: result });
   } catch (error) {
     res.status(500).send({ success: false, err: "DB error" })
@@ -245,6 +245,28 @@ app.post("/reservation/user/:userID/advisor/:advisorID", async (req, res) => {
   try {
     const ret = await db.collection("reservation").insertOne({ userId: new ObjectId(req.params.userID), advisorId: new ObjectId(req.params.advisorID), requests: Status.PENDING, validTime: {}, payment: {} });
     res.status(200).send({ success: true, data: ret });
+  } catch (error) {
+    res.status(400).send({ success: false, error: "db error" })
+  }
+})
+
+app.post("/message/user/:userID/advisor/:advisorID", async (req, res) => {
+  try {
+    console.log("userId", req.params.userID, "advisorId", req.params.advisorID)
+    const ret = await db.collection(COLLECTION_NAME).updateOne(
+      { _id: new ObjectId(req.params.userID) },
+      { $push: { chat: { sendTo: new ObjectId(req.params.advisorID), msg: req.body.message, image: "test.png", dateTime: new Date() } } });
+    res.status(200).send({ success: true, data: ret });
+  } catch (error) {
+    res.status(400).send({ success: false, error: "db error" })
+  }
+})
+
+app.get("/message/:userID/advisor/:advisorID", async (req, res) => {
+  try {
+    const ret = await db.collection(COLLECTION_NAME).find({ _id: new ObjectId(req.params.userID), chat: {$elemMatch : {sendTo: new ObjectId(req.params.advisorID)} }}).toArray();
+    const msg = ret[0].chat.filter(msgs => msgs.sendTo.toString() === req.params.advisorID).sort((a,b) => a.date - b.date);
+    res.status(200).send({ success: true, data: msg });
   } catch (error) {
     res.status(400).send({ success: false, error: "db error" })
   }
