@@ -7,6 +7,7 @@ export default function ChatDisplay({msg}){
             <p>Sender: "Test"</p>
             <p>Reciever: "TestReciever"</p>
             <p>Message: {msg.msg}</p>
+            <p>--------</p>
         </div>
     )
 

@@ -234,6 +234,29 @@ app.get("/getAdvisorInfo/client/:clientID", async (req, res) => {
   }
 })
 
+app.get("/getClientApproved/advisor/:advisorID", async (req, res) => {
+  try {
+
+    // const ret = await db.collection(COLLECTION_NAME).find({ role: "advisor" }).toArray();
+    const ret = await db.collection("reservation").find({ userId: new ObjectId(req.params.advisorID), requests: "approved" }).toArray();
+
+    console.log("client Info", ret);
+    // const reserveList = [];
+    // for (const reservation of reservationStatus) {
+    //   const index = ret.findIndex(item => item._id.equals(reservation.advisorId)); // Finding index using findIndex
+    //   if (index !== -1) {
+    //     ret[index]['requests'] = reservation.requests;
+    //   }
+    // }
+    // for (const usr of ret) {
+    //   reserveList.push({ _id: usr._id, name: usr.name, address: usr.address, email: usr.email, requests: usr.requests, profileImg: usr.profileImg });
+    // }
+    // res.status(200).send({ success: true, data: reserveList });
+  } catch (error) {
+    res.status(400).send({ success: false, error: "db error" });
+  }
+})
+
 const Status = {
   PENDING: 'pending',
   APPROVED: 'approved',

@@ -19,7 +19,7 @@ export default function Chat() {
     const getMsg = async () => {
         const ret = await getMessages(state.userId, location.state.advisorId);
         console.log("messages are:", ret);
-        setChatMsg(ret);
+        setChatMsg(ret.data);
     };
 
     useEffect(() => {
@@ -33,11 +33,7 @@ export default function Chat() {
             Receiver: <input value={location.state.advisorName} disabled />
             Message:<input value={message} onChange={e => setMessage(e.target.value)} />
             <button onClick={sendMessage}>Send Message</button>
-            {true ? (
-                chatMsg.map((chat, index) => console.log("111"))
-            ) : (
-                <p>No messages available</p>
-            )}
+            {chatMsg.map( (chat) => <ChatDisplay msg={chat} />)}
         </div>
     );
 }

@@ -85,6 +85,19 @@ export async function getClientInfo(advisorID){
     }
 }
 
+export async function getClientApproved(advisorID){
+    const url=`/getClientApproved/advisor/:advisorID`
+    try{
+        const ret = await axios.get(url, {
+            headers:{'Authorization': `Bearer ${localStorage.getItem("token")}`}
+        });
+        console.log("client Info newtork", ret)
+        return ret.data;
+    }catch(error){
+        return null;
+    }
+}
+
 export async function setReservation(userID, advisorID){
     const url=`/reservation/user/${userID}/advisor/${advisorID}`
     const token = localStorage.getItem("token");
