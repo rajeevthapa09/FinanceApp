@@ -25,7 +25,7 @@ export default function AdvisorDetails({advise}){
     }
 
     const chatAdv = () => {
-       navigate("/chat",  {state: {advisorId: advise._id, advisorName:advise.name}});
+       navigate("/chat",  {state: {id: advise._id, name:advise.name, role: "regular"}});
     }
 
     return(

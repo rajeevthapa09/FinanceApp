@@ -78,20 +78,18 @@ export async function getClientInfo(advisorID){
         const ret = await axios.get(url, {
             headers:{'Authorization': `Bearer ${localStorage.getItem("token")}`}
         });
-        console.log("client Info newtork", ret)
         return ret.data;
     }catch(error){
         return null;
     }
 }
 
-export async function getClientApproved(advisorID){
-    const url=`/getClientApproved/advisor/:advisorID`
+export async function getApprovedClient(advisorID){
+    const url=`/getApprovedClient/advisor/${advisorID}`
     try{
         const ret = await axios.get(url, {
             headers:{'Authorization': `Bearer ${localStorage.getItem("token")}`}
         });
-        console.log("client Info newtork", ret)
         return ret.data;
     }catch(error){
         return null;
@@ -137,9 +135,9 @@ export async function acceptClient(clientID, advisorID){
     }
 }
 
-export async function sentMsg(userID, advisorID, message){
+export async function sentMsg(senderID, recieverID, message){
     console.log("message is", message)
-    const url=`/message/user/${userID}/advisor/${advisorID}`
+    const url=`/message/sender/${senderID}/receiver/${recieverID}`
     const token = localStorage.getItem("token");
     try{
         const ret = await axios.post(url, {message},{
@@ -151,9 +149,9 @@ export async function sentMsg(userID, advisorID, message){
     }
 }
 
-export async function getMessages(userID, advisorID){
-    const url=`/message/${userID}/advisor/${advisorID}`
-    console.log("getMsg userid", userID, "advisorId", advisorID);
+export async function getMessages(senderID, recieverID){
+    const url=`/message/sender/${senderID}/receiver/${recieverID}`
+    console.log("getMsg userid", senderID, "advisorId", recieverID);
     try{
         const ret = await axios.get(url, {
             headers:{'Authorization': `Bearer ${localStorage.getItem("token")}`}

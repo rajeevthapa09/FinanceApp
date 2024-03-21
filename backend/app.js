@@ -141,7 +141,7 @@ function auth(req, res, next) {
   const token = req.headers["authorization"]?.split(" ")[1];
   const key = PRIVATE_KEY;
 
-  console.log("token is: ", token);
+  // console.log("token is: ", token);
   if (!token) {
     return res.status(401).send({ success: false, error: "Please provide token" });
   }
@@ -234,13 +234,19 @@ app.get("/getAdvisorInfo/client/:clientID", async (req, res) => {
   }
 })
 
-app.get("/getClientApproved/advisor/:advisorID", async (req, res) => {
+app.get("/getApprovedClient/advisor/:advisorID", async (req, res) => {
   try {
 
     // const ret = await db.collection(COLLECTION_NAME).find({ role: "advisor" }).toArray();
-    const ret = await db.collection("reservation").find({ userId: new ObjectId(req.params.advisorID), requests: "approved" }).toArray();
+    const retClient = await db.collection("reservation").find({ advisorId: new ObjectId(req.params.advisorID), requests: "approved" }).toArray();
 
-    console.log("client Info", ret);
+    // console.log("client Info", ret);
+    const clientList = []
+
+    for (const client of retClient){
+      const clientInfo = await db.collection(COLLECTION_NAME).findOne(client.userId);
+      clientList.push({id: clientInfo._id, name: clientInfo.name, address: clientInfo.address, email: clientInfo.address, profileImg: clientInfo.profileImg})
+    }
     // const reserveList = [];
     // for (const reservation of reservationStatus) {
     //   const index = ret.findIndex(item => item._id.equals(reservation.advisorId)); // Finding index using findIndex
@@ -251,7 +257,7 @@ app.get("/getClientApproved/advisor/:advisorID", async (req, res) => {
     // for (const usr of ret) {
     //   reserveList.push({ _id: usr._id, name: usr.name, address: usr.address, email: usr.email, requests: usr.requests, profileImg: usr.profileImg });
     // }
-    // res.status(200).send({ success: true, data: reserveList });
+    res.status(200).send({ success: true, data: clientList });
   } catch (error) {
     res.status(400).send({ success: false, error: "db error" });
   }
@@ -273,39 +279,49 @@ app.post("/reservation/user/:userID/advisor/:advisorID", async (req, res) => {
   }
 })
 
-app.post("/message/user/:userID/advisor/:advisorID", async (req, res) => {
+app.post("/message/sender/:senderID/receiver/:recieverID", async (req, res) => {
   try {
-    console.log("userId", req.params.userID, "advisorId", req.params.advisorID)
+    console.log("userId", req.params.senderID, "advisorId", req.params.recieverID)
     const ret = await db.collection(COLLECTION_NAME).updateOne(
-      { _id: new ObjectId(req.params.userID) },
-      { $push: { chat: { sendTo: new ObjectId(req.params.advisorID), msg: req.body.message, image: "test.png", dateTime: new Date() } } });
+      { _id: new ObjectId(req.params.senderID) },
+      { $push: { chat: { sendTo: new ObjectId(req.params.recieverID), msg: req.body.message, image: "test.png", dateTime: new Date() } } });
     res.status(200).send({ success: true, data: ret });
   } catch (error) {
     res.status(400).send({ success: false, error: "db error" })
   }
 })
 
-app.get("/message/:userID/advisor/:advisorID", async (req, res) => {
+app.get("/message/sender/:senderID/receiver/:recieverID", async (req, res) => {
   try {
-    const ret = await db.collection(COLLECTION_NAME).find({ _id: new ObjectId(req.params.userID), chat: {$elemMatch : {sendTo: new ObjectId(req.params.advisorID)} }}).toArray();
-    const msg = ret[0].chat.filter(msgs => msgs.sendTo.toString() === req.params.advisorID).sort((a,b) => a.date - b.date);
-    res.status(200).send({ success: true, data: msg });
+    const retSender = await db.collection(COLLECTION_NAME).find({ _id: new ObjectId(req.params.senderID)}).toArray();
+    const msgSender = retSender[0].chat.filter(msgs => msgs.sendTo.toString() === req.params.recieverID);
+    console.log("msgSender is: ", msgSender)
+
+    const retReciever = await db.collection(COLLECTION_NAME).find({ _id: new ObjectId(req.params.recieverID)}).toArray();
+    const msgReceiver = retReciever[0].chat.filter(msgs => msgs.sendTo.toString() === req.params.senderID);
+    console.log("msgReceiver is: ", msgReceiver)
+
+
+    const ret = [...msgSender, ...msgReceiver];
+    console.log("eretrn is", ret)
+
+    res.status(200).send({ success: true, data: ret });
   } catch (error) {
-    res.status(400).send({ success: false, error: "db error" })
+    res.status(400).send({ success: false, error: "db error" }) 
   }
 })
 
 app.get("/getClientInfo/:advisorID", async (req, res) => {
   try {
     const ret = await db.collection("reservation").find({ requests: "pending", advisorId: new ObjectId(req.params.advisorID) }).toArray();
-    console.log("getclientinfo", ret)
+    
     let userList = [];
     for (const usr of ret) {
       const retUsr = await db.collection(COLLECTION_NAME).findOne({ _id: new ObjectId(usr.userId) });
-      console.log("retUsr", retUsr);
+      
       userList.push({ id: retUsr._id, name: retUsr.name, address: retUsr.address, occupation: retUsr.occupation, profileImg: retUsr.profileImg });
     }
-    console.log("userList", userList);
+    
     res.status(200).send({ success: true, data: userList });
   } catch (error) {
     res.status(400).send({ success: false, error: "db error" });

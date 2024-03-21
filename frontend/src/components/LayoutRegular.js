@@ -2,15 +2,10 @@ import {createBrowserRouter} from "react-router-dom";
 import PastBudget from "./PastBudget";
 import Home from "./Home"
 import Profile from "./Profile"
-import BookAdvisor from "./BookAdvisors"
 import ViewMsg from "./ViewMsg"
-import Stocks from "./Stocks"
 import Savings from "./Savings"
-import BuySellStocks from "./BuySellStocks";
 import AdvisorList from "./AdvisorList";
 import Payment from "./Payment"
-import ProfileTest from "./ProfileTest"
-import AdvisorTest from "./AdvistorTest";
 import StockTest from "./StockTest";
 import Chat from "./Chat";
 

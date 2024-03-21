@@ -1,11 +1,11 @@
 
-export default function ChatDisplay({msg}){
+export default function ChatDisplay({msg, sender, receiver}){
 
     console.log("I am here")
     return(
         <div>
-            <p>Sender: "Test"</p>
-            <p>Reciever: "TestReciever"</p>
+            <p>Sender: {sender}</p>
+            <p>Reciever: {receiver}</p>
             <p>Message: {msg.msg}</p>
             <p>--------</p>
         </div>
