@@ -301,9 +301,8 @@ app.get("/message/sender/:senderID/receiver/:recieverID", async (req, res) => {
     const msgReceiver = retReciever[0].chat.filter(msgs => msgs.sendTo.toString() === req.params.senderID);
     console.log("msgReceiver is: ", msgReceiver)
 
-
     const ret = [...msgSender, ...msgReceiver];
-    console.log("eretrn is", ret)
+    console.log("eretrn is", ret) 
 
     res.status(200).send({ success: true, data: ret });
   } catch (error) {

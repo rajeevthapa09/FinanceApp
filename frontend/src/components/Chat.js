@@ -27,12 +27,12 @@ export default function Chat() {
     const getMsg = async () => {
         if (location.state.role === "regular") {
             const ret = await getMessages(state.userId, location.state.id);
-            console.log("messages are:", ret.data);
+            console.log("regular messages are:", ret.data);
             setChatMsg(ret.data);
         } else {
             console.log("lcoation", location.state.id, "userid", state.userId)
             const ret = await getMessages(location.state.id, state.userId);
-            console.log("messages are:", ret.data);
+            console.log("advisor messages are:", ret.data);
             setChatMsg(ret.data);
         }
     };
