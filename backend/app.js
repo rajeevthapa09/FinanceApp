@@ -2,6 +2,8 @@ const { MongoClient, ObjectId } = require('mongodb');
 const express = require("express");
 const cors = require('cors');
 const multer = require('multer');
+const socketIO = require('socket.io')
+const http = require('http');
 const COLLECTION_NAME = "personalFinance"
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken")
@@ -29,6 +31,8 @@ require('dotenv').config();
 
 //initialization
 const app = express();
+const server = http.createServer(app);
+const io = socketIO(server);
 
 //middleware
 app.use(cors());
@@ -50,6 +54,20 @@ async function connectDB() {
 }
 
 connectDB();
+
+io.on('connection', (socket) => {
+  console.log('New client connected');
+
+  socket.on('message', (data) => {
+      console.log('Received message:', data);
+      // Broadcast the message to all connected clients
+      io.emit('message', data);
+  });
+
+  socket.on('disconnect', () => {
+      console.log('Client disconnected');
+  });
+});
 
 //check for the extension of an image
 const getExtension = file => {

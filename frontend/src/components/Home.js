@@ -6,6 +6,9 @@ import GlobalContext from "./GlobalContext";
 import { CSVLink } from "react-csv"
 import Chart from "chart.js/auto"
 import { Pie } from "react-chartjs-2"
+import io from 'socket.io-client';
+
+
 
 export default function Home() {
 
@@ -91,6 +94,16 @@ export default function Home() {
         navigate("/stocks")
     }
 
+    const socket = io();
+
+// Send a message to the server
+socket.emit('message', 'Hello, server!') ;
+
+// Receive messages from the server
+socket.on('message', (data) => {
+    console.log('Received message from server:', data);
+});
+
     return (
         <div>
             <label>Select Date: </label>
@@ -170,6 +183,7 @@ export default function Home() {
             </table>
             <button onClick={submitBudget}>Submit</button>
             <div style={{width: "350px", height: "350px"}}><Pie data={pieData} /></div>
+
             <button onClick={goProfile}>Profile</button>
             <button onClick={goAdvisor}>Advisor List</button>
             <button onClick={goStocks}>Stocks</button>
