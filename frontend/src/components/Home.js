@@ -97,7 +97,7 @@ export default function Home() {
     const socket = io();
 
 // Send a message to the server
-socket.emit('message', 'Hello, server!') ;
+socket.emit('message', 'Hello , server!') ;
 
 // Receive messages from the server
 socket.on('message', (data) => {
