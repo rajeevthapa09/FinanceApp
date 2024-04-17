@@ -9,7 +9,6 @@ import { Pie } from "react-chartjs-2"
 import io from 'socket.io-client';
 
 
-
 export default function Home() {
 
     const{state, setState} = useContext(GlobalContext);
@@ -40,7 +39,7 @@ export default function Home() {
     const submitBudget = async () => {
         const ret = await addBudget({ budget, date: `${refYear.current.value}-${refMonth.current.value}` });
         if (ret.success) {
-            alert("successfully submitted");
+            alert("successfully submitted ");
         }
     }
 
