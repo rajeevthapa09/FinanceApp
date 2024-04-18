@@ -39,7 +39,7 @@ export default function Home() {
     const submitBudget = async () => {
         const ret = await addBudget({ budget, date: `${refYear.current.value}-${refMonth.current.value}` });
         if (ret.success) {
-            alert("successfully submitted ");
+            alert("successfully submitted");
         }
     }
 
