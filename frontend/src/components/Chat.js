@@ -3,43 +3,64 @@ import GlobalContext from "./GlobalContext";
 import { useLocation } from "react-router-dom";
 import { sentMsg, getMessages } from "./network";
 import ChatDisplay from "./ChatDisplay";
+import io from 'socket.io-client';
+
 
 export default function Chat() {
     const [message, setMessage] = useState("");
     const location = useLocation();
     const [chatMsg, setChatMsg] = useState([]);
     const { state, setState } = useContext(GlobalContext);
+    
 
-    const sendMessage = async () => {
-        if (location.state.role === "regular") {
-            console.log("ai am reggular")
-            const ret = await sentMsg(state.userId, location.state.id, message);
-            console.log("message", ret);
-            setMessage("");
-        } else {
-            console.log("i am advisor")
-            const ret = await sentMsg(location.state.id, state.userId, message);
-            console.log("message", ret);
-            setMessage("");
-        }
-    };
+    // const sendMessage = async () => {
+    //     if (location.state.role === "regular") {
+    //         console.log("ai am reggular")
+    //         const ret = await sentMsg(state.userId, location.state.id, message);
+    //         console.log("message", ret);
+    //         setMessage("");
+    //     } else {
+    //         console.log("i am advisor")
+    //         const ret = await sentMsg(location.state.id, state.userId, message);
+    //         console.log("message", ret);
+    //         setMessage("");
+    //     }
+    // };
 
-    const getMsg = async () => {
-        if (location.state.role === "regular") {
-            const ret = await getMessages(state.userId, location.state.id);
-            console.log("regular messages are:", ret.data);
-            setChatMsg(ret.data);
-        } else {
-            console.log("lcoation", location.state.id, "userid", state.userId)
-            const ret = await getMessages(location.state.id, state.userId);
-            console.log("advisor messages are:", ret.data);
-            setChatMsg(ret.data);
-        }
-    };
+    // const getMsg = async () => {
+    //     if (location.state.role === "regular") {
+    //         const ret = await getMessages(state.userId, location.state.id);
+    //         console.log("regular messages are:", ret.data);
+    //         setChatMsg(ret.data);
+    //     } else {
+    //         console.log("lcoation", location.state.id, "userid", state.userId)
+    //         const ret = await getMessages(location.state.id, state.userId);
+    //         console.log("advisor messages are:", ret.data);
+    //         setChatMsg(ret.data);
+    //     }
+    // };
 
+    // useEffect(() => {
+    //     getMsg();
+    // }, []);
     useEffect(() => {
-        getMsg();
-    }, []);
+        const socket = io();
+        socket.on('connection', ()=>{
+            console.log('Socket connected')
+        });
+        // return () => {
+        //     socket.disconnect();
+        //     console.log('Socket disconnected')
+        // }
+    }, [])
+
+    const sendMessage = () => {
+        if (message) {
+            const socket = io();
+            socket.emit('chat message', message);
+            setMessage("");
+        }
+    }
 
     return (
         <div>

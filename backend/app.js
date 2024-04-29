@@ -16,8 +16,6 @@ const nodemailer = require("nodemailer")
 // import { Client } from 'square';
 // import { randomUUID } from 'crypto';
 
-
-
 BigInt.prototype.toJSON = function () {
   return this.toString();
 };
@@ -32,7 +30,8 @@ require('dotenv').config();
 //initialization
 const app = express();
 const server = http.createServer(app);
-const io = socketIO(server);
+const {Server} = require("socket.io")
+const io = new Server(server)
 
 //middleware
 app.use(cors());
@@ -61,7 +60,7 @@ io.on('connection', (socket) => {
   socket.on('message', (data) => {
       console.log('Received message:', data);
       // Broadcast the message to all connected clients
-      io.emit('message', data);
+      // io.emit('message', data);
   });
 
   socket.on('disconnect', () => {
@@ -233,7 +232,7 @@ app.get("/getAdvisorInfo/client/:clientID", async (req, res) => {
   try {
     const ret = await db.collection(COLLECTION_NAME).find({ role: "advisor" }).toArray();
     const reservationStatus = await db.collection("reservation").find({ userId: new ObjectId(req.params.clientID) }).toArray();
-    console.log("ers Status", reservationStatus)
+    // console.log("ers Status", reservationStatus)
     const reserveList = [];
     for (const reservation of reservationStatus) {
       const index = ret.findIndex(item => item._id.equals(reservation.advisorId)); // Finding index using findIndex
@@ -245,7 +244,7 @@ app.get("/getAdvisorInfo/client/:clientID", async (req, res) => {
       reserveList.push({ _id: usr._id, name: usr.name, address: usr.address, email: usr.email, requests: usr.requests, profileImg: usr.profileImg });
     }
 
-    console.log("reservationList", ret);
+    // console.log("reservationList", ret);
     res.status(200).send({ success: true, data: reserveList });
   } catch (error) {
     res.status(400).send({ success: false, error: "db error" });
@@ -408,8 +407,10 @@ app.post("/api/pay", async (req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  console.log(err.message);
-})
+  console.error(err.stack);
+  res.status(500).send({ success: false, error: 'Internal Server Error' });
+});
+
 
 const PORT = 5001;
-app.listen(PORT, () => console.log(`listening to ${PORT}...`));
+server.listen(PORT, () => console.log(`listening to ${PORT}...`));
