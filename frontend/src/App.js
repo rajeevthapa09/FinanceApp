@@ -21,7 +21,7 @@ function App() {
         const user = localStorage.getItem("userEmail");
         const userId = localStorage.getItem("userId");
         const userName = localStorage.getItem("userName");
-        console.log("user", user, "token", token);
+        console.log("user", user, "token", token, "role", state.role);
         setState({...state, token, user, userId, userName})
       }
     } catch (error) {
@@ -37,6 +37,7 @@ function App() {
     <div>
       <GlobalContext.Provider value={{ state, setState }}>
         {state.token ? <Logout /> : ""}
+        {console.log("state user is: ", state.user, "token is: ", state.token)}
         {state.user ? (state.role ? <RouterProvider router={myrouter} /> : <RouterProvider router={advisorRouter} />) : <RouterProvider router={loginRouter} />}
       </GlobalContext.Provider>
     </div>

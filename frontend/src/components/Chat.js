@@ -57,7 +57,7 @@ export default function Chat() {
     const sendMessage = () => {
         if (message) {
             const socket = io();
-            socket.emit('chat message', message);
+            socket.emit('chat messages', message);
             setMessage("");
         }
     }

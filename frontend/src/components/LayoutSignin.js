@@ -1,7 +1,7 @@
 import {createBrowserRouter} from "react-router-dom";
 import Signup from "./Signup"
 import Login from "./Login";
-import Chat from "./Chat";
+import StockTest from "./StockTest";
 
 const loginRouter = createBrowserRouter([
     {
@@ -11,10 +11,6 @@ const loginRouter = createBrowserRouter([
     {
         path: "/signup",
         element: <Signup />
-    },
-    {
-        path: "/chat",
-        element: <Chat />
     }
 ])
 

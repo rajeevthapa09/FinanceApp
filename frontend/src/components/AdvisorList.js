@@ -9,9 +9,9 @@ export default function AdvisorList(){
     const{state, setState} = useContext(GlobalContext)
 
     const advisorDetail = async() => {
-        console.log("advisor list: ", state);
+        // console.log("advisor list: ", state);
         const ret = await getAdvisorInfo(state.userId);
-        console.log("advisor", ret);
+        // console.log("advisor", ret);
         setAdvisor(ret.data);
     }
 
