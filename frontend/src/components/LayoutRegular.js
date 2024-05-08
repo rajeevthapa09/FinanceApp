@@ -1,5 +1,4 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import {createBrowserRouter} from "react-router-dom";
 import PastBudget from "./PastBudget";
 import Home from "./Home"
 import Profile from "./Profile"
@@ -10,22 +9,43 @@ import Payment from "./Payment"
 import StockTest from "./StockTest";
 import Chat from "./Chat";
 
-const LayoutRegular = () => {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/viewProfile" element={<Profile />} />
-        <Route path="/bookAdvisor" element={<AdvisorList />} />
-        <Route path="/viewMsg" element={<ViewMsg />} />
-        <Route path="/stocks" element={<StockTest />} />
-        <Route path="/makePayment" element={<Payment />} />
-        <Route path="/viewSavings" element={<Savings />} />
-        <Route path="/pastBudget" element={<PastBudget />} />
-        <Route path="/chat" element={<Chat />} />
-      </Routes>
-    </Router>
-  );
-}
+const myrouter = createBrowserRouter([
+    {
+        path: "/",
+        element: <Home />
+    },
+    {
+        path: "/viewProfile",
+        element: <Profile />
+    },
+    {
+        path: "/bookAdvisor",
+        element: <AdvisorList />
+    },
+    {
+        path: "/viewMsg",
+        element: <ViewMsg />
+    },
+    {
+        path: "/stocks",
+        element: <StockTest />
+    },
+    {
+        path: "/makePayment",
+        element: <Payment />
+    },
+    {
+        path: "/viewSavings",
+        element: <Savings />
+    },
+    {
+        path: "/pastBudget",
+        element: <PastBudget />
+    },
+    {
+        path: "/chat",
+        element: <Chat />
+    }
+])
 
-export default LayoutRegular;
+export default myrouter

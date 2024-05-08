@@ -58,6 +58,19 @@ export async function getBudget(date, userEmail){
     }
 }
 
+export async function getUserInfo() {
+    // console.log("user email", userEmail)
+    const url = `/userinfo/${userEmail}`;
+    try {
+        const res = await axios.get(url);
+        console.log("network", res);
+        return res.data;
+
+    } catch (error) {
+        return null;
+    }
+}
+
 export async function getAdvisorInfo(userId){
     const url=`/getAdvisorInfo/client/${userId}`
     console.log("advisor network", userId)

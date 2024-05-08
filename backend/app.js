@@ -158,7 +158,7 @@ function auth(req, res, next) {
   const token = req.headers["authorization"]?.split(" ")[1];
   const key = PRIVATE_KEY;
 
-  // console.log("token is: ", token);
+   console.log("token is: ", token);
   if (!token) {
     return res.status(401).send({ success: false, error: "Please provide token" });
   }
@@ -219,6 +219,7 @@ app.get("/getBudget/:date/:email", async (req, res) => {
 
 app.get("/userInfo/:email", async (req, res) => {
   try {
+    console.log("email is", req.params.email)
     const ret = await db.collection(COLLECTION_NAME).findOne({ email: req.params.email });
     console.log("email is", req.params.email)
     // const profileImgUrl = `/images/${ret.profileImg}`

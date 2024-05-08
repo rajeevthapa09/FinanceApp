@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { getUserInfo } from './getUserInfo';
+import { getUserInfo } from './network';
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -9,6 +9,7 @@ export default function Profile(){
 
     const userDetails = async() => {
         const ret = await getUserInfo();
+        console.log("profile ret is", ret)
         setUserInfo(ret.data);
     }
 
