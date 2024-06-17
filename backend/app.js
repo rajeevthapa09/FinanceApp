@@ -293,7 +293,7 @@ app.post("/reservation/user/:userID/advisor/:advisorID", async (req, res) => {
     const ret = await db.collection("reservation").insertOne({ userId: new ObjectId(req.params.userID), advisorId: new ObjectId(req.params.advisorID), requests: Status.PENDING, validTime: {}, payment: {} });
     res.status(200).send({ success: true, data: ret });
   } catch (error) {
-    res.status(400).send({ success: false, error: "db errror" })
+    res.status(400).send({ success: false, error: "db error" })
   }
 })
 
