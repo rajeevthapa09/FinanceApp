@@ -46,7 +46,7 @@ export default function Chat() {
     useEffect(() => {
         const socket = io();
         socket.on('connection', ()=>{
-            console.log('Socket connected')
+            console.log('Socket connected ')
         });
         // return () => {
         //     socket.disconnect();
