@@ -11,7 +11,7 @@ export default function Chat() {
     const location = useLocation();
     const [chatMsg, setChatMsg] = useState([]);
     const { state, setState } = useContext(GlobalContext);
-    
+    // const socket = io();
 
     // const sendMessage = async () => {
     //     if (location.state.role === "regular") {
@@ -54,13 +54,13 @@ export default function Chat() {
         // }
     }, [])
 
-    const sendMessage = () => {
-        if (message) {
-            const socket = io();
-            socket.emit('chat messages', message);
-            setMessage("");
-        }
-    }
+    // const sendMessage = () => {
+    //     if (message) {
+    //         socket.emit('chat messages', message);
+    //         setMessage("");
+    //     }
+    // }
+    
 
     return (
         <div>
@@ -68,7 +68,7 @@ export default function Chat() {
             Sender: <input value={state.userName} disabled />
             Receiver: <input value={location.state.name} disabled />
             Message:<input value={message} onChange={e => setMessage(e.target.value)} />
-            <button onClick={sendMessage}>Send Message</button>
+            {/* <button onClick={sendMessage}>Send Message</button> */}
             {chatMsg.map((chat) => <ChatDisplay msg={chat} sender={state.userName} receiver={location.state.name} />)}
         </div>
     );

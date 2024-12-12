@@ -57,10 +57,10 @@ connectDB();
 io.on('connection', (socket) => {
   console.log('New client connected');
 
-  socket.on('message', (data) => {
+  socket.on('chat messages', (data) => {
       console.log('Received message:', data);
       // Broadcast the message to all connected clients
-      // io.emit('message', data);
+      io.emit('message', data);
   });
 
   socket.on('disconnect', () => {
@@ -413,5 +413,5 @@ app.use((err, req, res, next) => {
 });
 
 
-const PORT = 5001;
+const PORT = 3001;
 server.listen(PORT, () => console.log(`listening to ${PORT}...`));

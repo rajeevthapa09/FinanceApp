@@ -1,5 +1,5 @@
 import axios from 'axios'
-axios.defaults.baseURL = "http://localhost:5001";
+axios.defaults.baseURL = "http://localhost:3001";
 // axios.defaults.headers.common['authorization'] = `Bearer ${localStorage.getItem("token")}`
 export const userEmail = localStorage.getItem("userEmail")
 // console.log(`Bearer ${localStorage.getItem("token")}`, "useremail", userEmail);

@@ -24,7 +24,7 @@ export default function Profile(){
     return(
         <div>
             <button onClick={goBack}>Back</button>
-            <img src={`http://localhost:5001/images/${userInfo.profileImg}`} height={100} width={100} alt="profile pic" /><br />
+            <img src={`http://localhost:3001/images/${userInfo.profileImg}`} height={100} width={100} alt="profile pic" /><br />
             <label>Name:</label><input type="text" value={userInfo.name} /><br />
             <label>Address:</label><input type="text" value={userInfo.address} /><br />
             <label>Occupation: </label><input type="text" value={userInfo.occupation} /><br />
