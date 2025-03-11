@@ -32,8 +32,13 @@ export default function Stocks() {
         // navigate("/makePayment")
     }
 
+    const goBack = () =>{
+        navigate("/")
+    }
+
     return (
         <div>
+            <button onClick={goBack}>Back</button>
             <label>Search for Stock: </label><input type="text" value={stock} onChange={change} />
             <button onClick={getStocks}>Submit</button>
             <div ref={stockPrice}></div>

@@ -59,10 +59,12 @@ export async function getBudget(date, userEmail){
 }
 
 export async function getUserInfo() {
-    // console.log("user email", userEmail)
+    console.log("user email", userEmail)
     const url = `/userinfo/${userEmail}`;
     try {
-        const res = await axios.get(url);
+        const res = await axios.get(url, {
+            headers:{'Authorization': `Bearer ${localStorage.getItem("token")}`}
+        });
         console.log("network", res);
         return res.data;
 

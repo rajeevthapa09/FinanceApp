@@ -40,6 +40,10 @@ app.use(express.json());
 // Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, 'public')));
 
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// });
+
 async function connectDB() {
   try {
     let uri = process.env.DB_URI;
@@ -156,9 +160,10 @@ app.post("/signin", async (req, res) => {
 
 function auth(req, res, next) {
   const token = req.headers["authorization"]?.split(" ")[1];
+  console.log("authorization header: ", req.headers["authorization"]);
   const key = PRIVATE_KEY;
 
-   console.log("token is: ", token);
+   console.log("token is auth: ", token);
   if (!token) {
     return res.status(401).send({ success: false, error: "Please provide token" });
   }

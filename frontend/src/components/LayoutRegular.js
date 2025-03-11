@@ -6,8 +6,8 @@ import ViewMsg from "./ViewMsg"
 import Savings from "./Savings"
 import AdvisorList from "./AdvisorList";
 import Payment from "./Payment"
-import StockTest from "./StockTest";
 import Chat from "./Chat";
+import Stocks from "./Stocks";
 
 const myrouter = createBrowserRouter([
     {
@@ -28,7 +28,7 @@ const myrouter = createBrowserRouter([
     },
     {
         path: "/stocks",
-        element: <StockTest />
+        element: <Stocks />
     },
     {
         path: "/makePayment",
@@ -45,7 +45,8 @@ const myrouter = createBrowserRouter([
     {
         path: "/chat",
         element: <Chat />
-    }
+    },
+    
 ])
 
 export default myrouter

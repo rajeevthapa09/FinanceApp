@@ -11,6 +11,10 @@ const loginRouter = createBrowserRouter([
     {
         path: "/signup",
         element: <Signup />
+    },
+    {
+        path: "*",
+        element: <div>404 error</div>
     }
 ])
 

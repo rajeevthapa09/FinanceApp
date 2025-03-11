@@ -39,6 +39,7 @@ function App() {
         {state.token ? <Logout /> : ""}
         {console.log("state user is: ", state.user, "token is: ", state.token)}
         {state.user ? (state.role ? <RouterProvider router={myrouter} /> : <RouterProvider router={advisorRouter} />) : <RouterProvider router={loginRouter} />}
+        
       </GlobalContext.Provider>
     </div>
   );
